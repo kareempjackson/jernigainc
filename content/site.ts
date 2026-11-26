@@ -36,10 +36,18 @@ export const siteDefaults = {
           description: "Clinical practice with Dr. Jernigan-Noesi",
           href: "/about/licensed-psychologist",
         },
+        {
+          label: "Our team",
+          description: "The practice pioneers",
+          href: "/our-team",
+        },
+        {
+          label: "Capabilities",
+          description: "Statement and certifications",
+          href: "/capabilities",
+        },
       ],
     },
-    { label: "Our team", href: "/our-team", eyebrow: "", children: [] },
-    { label: "Capabilities", href: "/capabilities", eyebrow: "", children: [] },
     { label: "Insights", href: "/insights", eyebrow: "", children: [] },
     { label: "Contact", href: "/contact", eyebrow: "", children: [] },
   ],
@@ -52,6 +60,57 @@ export const siteDefaults = {
     promoCta: "Subscribe",
     promoHref: "/digest",
     promoImage: IMAGE,
+  },
+  /** The three large dropdowns on the navigation bar. */
+  megaMenus: {
+    who: {
+      eyebrow: "Who we serve",
+      title: "Partners in belonging, across six sectors.",
+      body: "Different systems, one shared goal: places where every person can thrive.",
+      linkLabel: "See all sectors",
+      caseTag: "Case scenario",
+      caseTitle: "How a public school district rebuilt trust with families",
+      caseCta: "Read the story",
+      caseHref: "/services/education#case",
+      caseImage: IMAGE,
+    },
+    services: {
+      eyebrow: "Services · six practice areas",
+      previewLabel: "Preview",
+    },
+    about: {
+      links: [
+        {
+          icon: "award",
+          label: "About us",
+          description: "Our story, since 2008",
+          href: "/about",
+        },
+        {
+          icon: "flower",
+          label: "Licensed psychologist",
+          description: "Clinical practice with Dr. Jernigan-Noesi",
+          href: "/about/licensed-psychologist",
+        },
+        {
+          icon: "bars",
+          label: "Our team",
+          description: "The practice pioneers",
+          href: "/our-team",
+        },
+        {
+          icon: "blocks",
+          label: "Capabilities",
+          description: "Statement and certifications",
+          href: "/capabilities",
+        },
+      ],
+      cardTitle:
+        "Licensed psychologist, researcher and founder of Jernigan & Associates.",
+      cardCta: "Meet Dr. Maryam",
+      cardHref: "/our-team#founder",
+      cardImage: IMAGE,
+    },
   },
   footer: {
     explore: [

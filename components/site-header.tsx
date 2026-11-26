@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { Logo } from "@/components/brand";
 import { Glyph } from "@/components/icons";
-import { SiteMenu } from "@/components/site-menu";
-import { StickyBar } from "@/components/sticky-bar";
+import type { MegaMenuData } from "@/components/mega-menus";
+import { NavBar } from "@/components/nav-bar";
 import type { SiteContent } from "@/content/site";
 
 export type NavItem = {
@@ -21,27 +20,29 @@ export type Announcement = {
 };
 
 /**
- * Site-wide top navigation: an optional announcement bar that scrolls away
- * with the page, then the 80px bar (logo left; consultation button and Menu
- * right), which sticks to the top and hides while scrolling down (see
- * sticky-bar.tsx). The Menu button opens the full navigation (site-menu.tsx).
+ * Site-wide top navigation: an optional announcement strip that scrolls away
+ * with the page, then the navigation bar, which stays fixed and folds its
+ * links into the "Book a consultation" and Menu buttons on scroll (see
+ * nav-bar.tsx). Menu opens the full navigation (site-menu.tsx).
  */
 export function SiteHeader({
   nav,
   menu,
   social,
+  mega,
   announcement,
 }: {
   nav: NavItem[];
   menu: SiteContent["menu"];
   social: { label: string; href: string }[];
-  /** Pass `null` to hide the bar. */
+  mega: MegaMenuData;
+  /** Pass `null` to hide the strip. */
   announcement?: Announcement | null;
 }) {
   return (
     <>
       {announcement && (
-        <div className="relative z-30 bg-navy-900 text-white">
+        <div className="bg-navy-900 text-white">
           <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-center gap-x-4 gap-y-1.5 px-6 py-2 text-center text-xs tracking-[0.01em] text-white/85 md:px-16 lg:h-10 lg:flex-nowrap lg:py-0">
             <p>{announcement.text}</p>
             <Link
@@ -54,27 +55,7 @@ export function SiteHeader({
           </div>
         </div>
       )}
-
-      <StickyBar>
-        <div className="border-b border-white/10 bg-blue-900">
-          <div className="mx-auto flex h-20 max-w-[1440px] items-center gap-2 px-6 md:px-16">
-            <Link
-              href="/"
-              aria-label="Jernigan & Associates, home"
-              className="mr-auto"
-            >
-              <Logo width={104} />
-            </Link>
-            <Link
-              href={menu.ctaHref}
-              className="type-button hidden h-12 items-center bg-tan-300 px-5 text-blue-900 transition-colors hover:bg-white sm:flex"
-            >
-              {menu.ctaLabel}
-            </Link>
-            <SiteMenu nav={nav} menu={menu} social={social} />
-          </div>
-        </div>
-      </StickyBar>
+      <NavBar barNav={nav} nav={nav} menu={menu} social={social} mega={mega} />
     </>
   );
 }

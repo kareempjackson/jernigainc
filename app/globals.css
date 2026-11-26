@@ -205,3 +205,36 @@ body {
     }
   }
 }
+
+/*
+ * Moving between pages — a plain cross-fade, with nothing changing position.
+ *
+ * Arrival: each page's content fades in when opened.
+ * Leaving: when a menu link is followed, <html data-leaving> fades the
+ * current page out while the menu closes; the next page clears it.
+ *
+ * Both fades happen over the hero blue behind the content (set on <main> in
+ * the site layout), so the top of the screen holds its colour throughout and
+ * only the words and pictures change.
+ */
+@keyframes page-arrive {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@utility page-arrive {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: page-arrive 0.7s cubic-bezier(0.33, 1, 0.68, 1) backwards;
+    transition: opacity 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html[data-leaving] .page-arrive {
+    opacity: 0;
+  }
+}

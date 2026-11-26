@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { AnimatePresence, MotionConfig, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
   BlockButton,
@@ -48,6 +49,35 @@ const fade = (delay: number) => ({
 
 const MotionLink = motion.create(Link);
 
+/**
+ * A main item in the overlay. Items with sub-links are not pages to visit
+ * from here: they only bring up their sub-links. The rest are ordinary links.
+ */
+function MenuItem({
+  href,
+  expandable,
+  children,
+  ...rest
+}: {
+  href: string;
+  expandable: boolean;
+  children: ReactNode;
+  className: string;
+  onMouseEnter: () => void;
+  onFocus: () => void;
+  onClick: () => void;
+}) {
+  return expandable ? (
+    <button type="button" aria-haspopup="true" {...rest}>
+      {children}
+    </button>
+  ) : (
+    <Link href={href} {...rest}>
+      {children}
+    </Link>
+  );
+}
+
 /** The item for the page being viewed, else the first one with sub-links. */
 function startingItem(nav: NavItem[]) {
   const path = window.location.pathname;
@@ -63,8 +93,8 @@ function startingItem(nav: NavItem[]) {
  * The "Menu" button and the full-screen overlay it opens: the numbered main
  * items on the left, the highlighted item's sub-links in the middle, and a
  * promo card on the right, with search and social links along the bottom.
- * Hovering or focusing an item highlights it. Closes on Escape, on Close, and
- * when a link is followed.
+ * Hovering or focusing an item highlights it. Closes on Escape and on Close;
+ * following a link plays the closing transition first, then opens the page.
  */
 export function SiteMenu({
   nav,
@@ -80,6 +110,38 @@ export function SiteMenu({
   // The overlay is attached to <body> from the first time the menu is opened.
   const [mounted, setMounted] = useState(false);
   const item = nav[active] ?? nav[0];
+
+  const router = useRouter();
+  /** Where to go once the overlay has finished closing. */
+  const pending = useRef<string | null>(null);
+
+  /**
+   * A link inside the overlay was clicked: close the overlay first and only
+   * then move to the page, so the new page is revealed rather than swapped in
+   * underneath. Runs in the capture phase, ahead of <Link>'s own handling.
+   */
+  const followLink = (event: React.MouseEvent<HTMLElement>) => {
+    const link = (event.target as HTMLElement).closest("a");
+    if (!link) return;
+
+    const href = link.getAttribute("href") ?? "";
+    const newTab =
+      event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0;
+    // Leave new-tab clicks and links off the site to the browser.
+    if (newTab || !href.startsWith("/")) {
+      setOpen(false);
+      return;
+    }
+    event.preventDefault();
+    pending.current = href;
+    setOpen(false);
+  };
+
+  const goToPending = () => {
+    const href = pending.current;
+    pending.current = null;
+    if (href) router.push(href);
+  };
 
   // The page behind must not scroll while the overlay is up.
   useEffect(() => {
@@ -141,7 +203,7 @@ export function SiteMenu({
         {/* Rendered on <body>: inside the sliding bar it would move with it. */}
         {mounted &&
           createPortal(
-            <AnimatePresence>
+            <AnimatePresence onExitComplete={goToPending}>
               {open && (
                 <motion.div
                   id="site-menu"
@@ -152,22 +214,28 @@ export function SiteMenu({
                   initial="closed"
                   animate="open"
                   exit="closed"
-                  onClick={(event) => {
-                    if ((event.target as HTMLElement).closest("a"))
-                      setOpen(false);
-                  }}
-                  className="fixed inset-0 z-50 overflow-y-auto bg-navy-900 text-white"
+                  onClickCapture={followLink}
+                  // Never scrolls sideways. On desktop it does not scroll at all; on
+                  // small screens it may scroll down if the stacked content is taller
+                  // than the screen.
+                  className="fixed inset-0 z-50 overflow-y-auto overflow-x-hidden overscroll-contain bg-navy-900 text-white lg:overflow-hidden"
                 >
-                  {/* Petal outlines, cropped at the frame edge */}
-                  <Flower
-                    size={520}
-                    className="pointer-events-none absolute -bottom-40 right-[-4%] hidden text-white/[0.04] lg:block"
-                  />
+                  {/* Petal outlines. They hang past the corner, so they sit in a
+                      clipped layer: otherwise they would make the menu scroll. */}
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 overflow-hidden"
+                  >
+                    <Flower
+                      size={520}
+                      className="absolute -bottom-40 right-[-4%] hidden text-white/[0.04] lg:block"
+                    />
+                  </div>
 
-                  <div className="relative mx-auto flex min-h-full max-w-[1440px] flex-col px-6 md:px-16">
+                  <div className="relative mx-auto flex min-h-full max-w-[1440px] flex-col px-6 md:px-16 lg:h-full lg:min-h-0">
                     <motion.div
                       variants={fade(0.2)}
-                      className="flex h-[104px] shrink-0 items-center gap-3 border-b border-white/15"
+                      className="flex h-20 shrink-0 items-center gap-3"
                     >
                       <Link
                         href="/"
@@ -191,29 +259,22 @@ export function SiteMenu({
                       </button>
                     </motion.div>
 
-                    <div className="grid flex-1 gap-x-14 gap-y-10 py-10 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.9fr)_minmax(0,0.85fr)] lg:py-12">
+                    <div className="grid min-h-0 flex-1 gap-x-14 gap-y-8 pb-6 pt-12 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.9fr)_minmax(0,0.7fr)] lg:pt-[clamp(3.25rem,10svh,6.5rem)]">
                       <nav aria-label="Main">
-                        <motion.ol variants={list}>
+                        <motion.ol
+                          variants={list}
+                          className="space-y-[clamp(0.75rem,2.4svh,1.5rem)]"
+                        >
                           {nav.map((entry, i) => (
                             <li key={entry.label} className="overflow-hidden">
                               <motion.div variants={rise}>
-                                <Link
+                                <MenuItem
                                   href={entry.href}
+                                  expandable={entry.children.length > 0}
                                   onMouseEnter={() => setActive(i)}
                                   onFocus={() => setActive(i)}
-                                  onClick={(event) => {
-                                    // Touch: the first tap reveals the sub-links.
-                                    if (
-                                      entry.children.length > 0 &&
-                                      active !== i &&
-                                      window.matchMedia("(hover: none)").matches
-                                    ) {
-                                      event.preventDefault();
-                                      event.stopPropagation();
-                                      setActive(i);
-                                    }
-                                  }}
-                                  className={`group flex items-baseline gap-5 font-serif text-[clamp(2.25rem,min(4.6vw,7.2svh),4rem)] leading-[1.12] tracking-[-0.02em] transition-colors ${
+                                  onClick={() => setActive(i)}
+                                  className={`group flex items-baseline gap-5 text-left font-serif text-[clamp(2.25rem,min(4.2vw,6.6svh),3.75rem)] leading-[1.16] tracking-[-0.02em] transition-colors ${
                                     active === i
                                       ? "text-white"
                                       : "text-white/35"
@@ -227,7 +288,7 @@ export function SiteMenu({
                                   {entry.children.length > 0 && (
                                     <Glyph
                                       name="arrow-right"
-                                      size={26}
+                                      size={24}
                                       className={`shrink-0 self-center text-tan-300 transition-opacity ${
                                         active === i
                                           ? "opacity-100"
@@ -235,13 +296,13 @@ export function SiteMenu({
                                       }`}
                                     />
                                   )}
-                                </Link>
+                                </MenuItem>
                               </motion.div>
                             </li>
                           ))}
                         </motion.ol>
                       </nav>
-                      <motion.div variants={fade(0.45)} className="lg:pt-3">
+                      <motion.div variants={fade(0.45)} className="lg:pt-2">
                         <AnimatePresence mode="wait" initial={false}>
                           {item.children.length > 0 && (
                             <motion.div
@@ -260,15 +321,15 @@ export function SiteMenu({
                                   {item.eyebrow}
                                 </p>
                               )}
-                              <ul className="mt-5">
+                              <ul className="mt-3">
                                 {item.children.map((child) => (
                                   <li key={child.label}>
                                     <Link
                                       href={child.href}
-                                      className="group flex items-center justify-between gap-6 border-b border-white/15 py-3"
+                                      className="group flex items-center justify-between gap-6 border-b border-white/15 py-[clamp(0.25rem,1.1svh,0.625rem)]"
                                     >
                                       <span>
-                                        <span className="block font-medium group-hover:text-tan-300">
+                                        <span className="block text-[15px] font-medium group-hover:text-tan-300">
                                           {child.label}
                                         </span>
                                         {child.description && (
@@ -295,7 +356,7 @@ export function SiteMenu({
                         href={menu.promoHref || "#"}
                         className="group hidden self-start lg:block"
                       >
-                        <span className="relative flex aspect-[13/20] max-h-[min(500px,52svh)] w-full flex-col justify-end overflow-hidden bg-blue-700 p-7">
+                        <span className="relative flex aspect-[13/18] max-h-[min(380px,42svh)] w-full flex-col justify-end overflow-hidden bg-blue-700 p-5">
                           {menu.promoImage ? (
                             <>
                               <Photo
@@ -318,11 +379,11 @@ export function SiteMenu({
                           <span className="relative self-start bg-lilac-200 px-2.5 py-1.5 text-xs text-blue-900">
                             {menu.promoTag}
                           </span>
-                          <span className="relative mt-3 font-serif text-[1.75rem] leading-[1.08] tracking-[-0.01em]">
+                          <span className="relative mt-2.5 font-serif text-[1.3125rem] leading-[1.1] tracking-[-0.01em]">
                             {menu.promoTitle}
                           </span>
                         </span>
-                        <span className="flex h-[52px] items-center justify-between bg-mist-200 px-7 text-sm font-medium text-blue-900 transition-colors group-hover:bg-white">
+                        <span className="flex h-11 items-center justify-between bg-mist-200 px-5 text-[13px] font-medium text-blue-900 transition-colors group-hover:bg-white">
                           {menu.promoCta}
                           <Glyph name="arrow-up-right" size={12} />
                         </span>
@@ -330,12 +391,12 @@ export function SiteMenu({
                     </div>
                     <motion.div
                       variants={fade(0.65)}
-                      className="flex shrink-0 flex-wrap items-end justify-between gap-x-10 gap-y-6 pb-10"
+                      className="flex shrink-0 flex-wrap items-end justify-between gap-x-10 gap-y-5 pb-7"
                     >
                       <form
                         role="search"
                         action="/search"
-                        className="flex h-[52px] w-full max-w-[420px] items-center border border-white/40 transition-colors focus-within:border-white hover:border-white/70"
+                        className="flex h-11 w-full max-w-[380px] items-center border border-white/40 transition-colors focus-within:border-white hover:border-white/70"
                       >
                         <label htmlFor="site-search" className="sr-only">
                           Search

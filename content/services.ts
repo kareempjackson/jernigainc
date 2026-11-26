@@ -10,6 +10,8 @@ export type ServiceContent = {
   cardBody: string;
   /** One line under the name in the menu. */
   menuBody: string;
+  /** Shown beside the list in the Services dropdown. */
+  preview: { title: string; body: string; tags: string[] };
   icon: string;
   seo: Seo;
   hero: HeroContent;
@@ -36,6 +38,11 @@ export const serviceDefaults: ServiceContent[] = [
   {
     slug: "education",
     menuBody: "Pre-K through higher education",
+    preview: {
+      title: "Inclusive, equitable learning, Pre-K through higher education.",
+      body: "Faculty development, curriculum redesign and support for Students of Color, grounded in psychology and pedagogy.",
+      tags: ["Educator PD", "Curriculum review", "Climate research"],
+    },
     name: "Education",
     order: 1,
     cardBody:
@@ -102,6 +109,11 @@ export const serviceDefaults: ServiceContent[] = [
   {
     slug: "mental-health",
     menuBody: "Racial trauma and clinical consultation",
+    preview: {
+      title: "Quality mental health care is culturally responsive care.",
+      body: "Organizational assessment, racial trauma treatment protocols and role-specific training for clinical teams.",
+      tags: ["Racial trauma", "Clinical supervision", "Staff training"],
+    },
     name: "Mental Health",
     order: 2,
     cardBody:
@@ -167,6 +179,11 @@ export const serviceDefaults: ServiceContent[] = [
   {
     slug: "healthcare",
     menuBody: "Health equity for clinical teams",
+    preview: {
+      title: "Culturally responsive care improves outcomes and lowers risk.",
+      body: "Health equity planning, disparities assessment and training for providers, from bedside to boardroom.",
+      tags: ["Health equity", "Bias training", "Care pathways"],
+    },
     name: "Healthcare",
     order: 3,
     cardBody:
@@ -233,6 +250,11 @@ export const serviceDefaults: ServiceContent[] = [
   {
     slug: "research-and-evaluation",
     menuBody: "Mixed-methods research and assessment",
+    preview: {
+      title: "Evidence that reveals both the problem and the path forward.",
+      body: "Climate assessments, program evaluation and research coaching, grounded in the Intersections Research Lab.",
+      tags: ["Assessment", "Program evaluation", "Mixed methods"],
+    },
     name: "Research and Evaluation",
     order: 4,
     cardBody: "Assessment, mixed-methods research, and program evaluation.",
@@ -296,6 +318,11 @@ export const serviceDefaults: ServiceContent[] = [
   {
     slug: "leadership-development",
     menuBody: "Coaching and inclusive leadership",
+    preview: {
+      title: "Inclusive leadership and people management that sustain change.",
+      body: "Executive coaching, culture assessment and accountability structures for leaders, managers and teams.",
+      tags: ["Executive coaching", "Culture assessment", "Accountability"],
+    },
     name: "Leadership Development",
     order: 5,
     cardBody:
@@ -363,6 +390,12 @@ export const serviceDefaults: ServiceContent[] = [
   {
     slug: "curriculum-and-training",
     menuBody: "Content design and workshops",
+    preview: {
+      title:
+        "Curricula and trainings that change practice, not just knowledge.",
+      body: "Custom curricula and six signature trainings, delivered in person, virtually and in LMS-ready formats.",
+      tags: ["Curriculum design", "Workshops", "Certificate programs"],
+    },
     name: "Curriculum and Training",
     order: 6,
     cardBody:

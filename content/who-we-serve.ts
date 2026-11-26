@@ -30,6 +30,7 @@ export const whoWeServeDefaults = {
         icon: "sprout",
         tag: "Pre-K to 12",
         name: "K-12 schools & districts",
+        menuBody: "Culturally responsive teaching and school climate",
         body: "Culturally responsive teaching, climate assessments and support for Students of Color and their families.",
         helps: [
           "Educator professional development",
@@ -43,6 +44,7 @@ export const whoWeServeDefaults = {
         icon: "award",
         tag: "Higher education",
         name: "Colleges & universities",
+        menuBody: "Inclusive pedagogy and faculty development",
         body: "Inclusive pedagogy, faculty development and support for students at predominantly white institutions.",
         helps: [
           "Faculty and staff training",
@@ -56,6 +58,7 @@ export const whoWeServeDefaults = {
         icon: "cross",
         tag: "Healthcare",
         name: "Hospitals & health systems",
+        menuBody: "Health equity and culturally responsive care",
         body: "Health equity and culturally responsive care for clinical teams, residents and patient-facing staff.",
         helps: [
           "Implicit bias and health equity training",
@@ -69,6 +72,7 @@ export const whoWeServeDefaults = {
         icon: "flower",
         tag: "Mental health",
         name: "Behavioral & mental health providers",
+        menuBody: "Racial trauma-informed clinical practice",
         body: "Racial trauma–informed practice and clinical consultation for counselors, therapists and agencies.",
         helps: [
           "Racial trauma-informed care",
@@ -82,6 +86,7 @@ export const whoWeServeDefaults = {
         icon: "focus",
         tag: "Legal & criminal justice",
         name: "Courts & legal systems",
+        menuBody: "Evaluations, training and expert consultation",
         body: "Expert consultation, evaluations and training for courts, attorneys and justice-involved programs.",
         helps: [
           "Forensic and psychological evaluation",
@@ -95,6 +100,7 @@ export const whoWeServeDefaults = {
         icon: "bars",
         tag: "Organizations",
         name: "Workplaces, nonprofits & media",
+        menuBody: "Inclusive leadership and team belonging",
         body: "Inclusive leadership, team belonging and advisory work for companies, foundations and studios.",
         helps: [
           "Inclusive leadership development",
