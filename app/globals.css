@@ -1,26 +1,207 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Jernigan & Associates — Bloom palette.
+ * Seven families, six tints each (100 / 200 / 300 / 500 / 700 / 900).
+ * `static` keeps every token in :root so they can be read with var(--color-*).
+ */
+@theme static {
+  /* Drop Tailwind's default blue so only brand blues exist. */
+  --color-blue-*: initial;
+
+  --color-paper-100: #f7f4ef;
+  --color-paper-200: #efeae3;
+  --color-paper-300: #ddd7cf;
+  --color-paper-500: #b5aea6;
+  --color-paper-700: #8a847d;
+  --color-paper-900: #6e6964;
+
+  --color-blue-100: #e3eef8;
+  --color-blue-200: #c2d8ef;
+  --color-blue-300: #8fb5df;
+  --color-blue-400: #5c92c9; /* icon accent, sits between 300 and 500 */
+  --color-blue-500: #2f6fae;
+  --color-blue-700: #1b4f86;
+  --color-blue-900: #123a66;
+
+  --color-mist-100: #e6f8fb;
+  --color-mist-200: #c9f0f5;
+  --color-mist-300: #a5e5ee;
+  --color-mist-500: #6fd3e2;
+  --color-mist-700: #4fc3d6;
+  --color-mist-900: #3fb4c9;
+
+  --color-tan-100: #faf3e6;
+  --color-tan-200: #f3e6cd;
+  --color-tan-300: #ebd9b8;
+  --color-tan-500: #e0c79c;
+  --color-tan-700: #d6b98a;
+  --color-tan-900: #c9a877;
+
+  --color-lilac-100: #f3ecfc;
+  --color-lilac-200: #e6d9f8;
+  --color-lilac-300: #d6c2f2;
+  --color-lilac-500: #c3a8ea;
+  --color-lilac-700: #b394e0;
+  --color-lilac-900: #a283d6;
+
+  --color-petal-100: #fceaf3;
+  --color-petal-200: #f8d5e7;
+  --color-petal-300: #f2bbd8;
+  --color-petal-500: #eda3cb;
+  --color-petal-700: #e88fc0;
+  --color-petal-900: #e07db4;
+
+  --color-navy-100: #e4e8f0;
+  --color-navy-200: #c3ccdd;
+  --color-navy-300: #8b9bb8;
+  --color-navy-500: #2a4a75;
+  --color-navy-700: #12305a;
+  --color-navy-900: #0b2140;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-background: var(--color-paper-100);
+  --color-foreground: var(--color-blue-900);
+  /* Two voices, one system: Hedvig for titles and numbers, Inter for the work. */
+  --font-serif: var(--font-hedvig), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-paper-100);
+  color: var(--color-blue-900);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ---- Type scale (brand guide p.12) ------------------------------------ */
+
+/* H1 display — Hedvig 92 / 98% / -2% */
+@utility type-h1 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(3rem, 7.2vw, 5.75rem);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+}
+
+/* H2 section — Hedvig 52–72 / 104% / -1.5% */
+@utility type-h2 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(2.25rem, 4.6vw, 3.25rem);
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+}
+
+@utility type-h2-lg {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(2.75rem, 6vw, 4.5rem);
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+}
+
+/* Big number — Hedvig 88 / -2% */
+@utility type-number {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+/* Body — Inter 16–17 / 155% */
+@utility type-body {
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+}
+
+/* Eyebrow — Inter Semi Bold 13 / +8% / caps */
+@utility type-eyebrow {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Button — Inter Medium 15 */
+@utility type-button {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  line-height: 1;
+}
+
+/* Texture — petal hatch at 25% for panels */
+@utility petal-hatch {
+  background-image: repeating-linear-gradient(
+    45deg,
+    color-mix(in srgb, currentColor 25%, transparent) 0 1px,
+    transparent 1px 7px
+  );
+}
+
+/* Pattern in motion — blooms breathe; buds stay still. */
+@keyframes bloom-pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@utility bloom-pulse {
+  animation: bloom-pulse 5s ease-in-out infinite;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+/* Quiet dot grid for paper sections. */
+@utility dot-grid {
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--color-blue-900) 22%, transparent) 1.5px,
+    transparent 2px
+  );
+  background-size: 70px 105px;
+  background-position: 14px 24px;
+}
+
+/*
+ * Scroll to expand — the frame grows to full width as it scrolls into view.
+ * Only where scroll-driven animations are supported; elsewhere the frame is
+ * simply full width and the hint stays hidden.
+ */
+@keyframes scroll-expand {
+  from {
+    scale: 0.86;
+  }
+  to {
+    scale: 1;
+  }
+}
+
+@utility scroll-expand {
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      animation: scroll-expand linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 55%;
+    }
+  }
+}
+
+@utility scroll-expand-hint {
+  display: none;
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      display: block;
+    }
+  }
 }
