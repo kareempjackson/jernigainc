@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { AnimatePresence, MotionConfig, motion } from "framer-motion";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -63,6 +63,7 @@ function MenuItem({
   expandable: boolean;
   children: ReactNode;
   className: string;
+  "aria-current"?: "page" | "true";
   onMouseEnter: () => void;
   onFocus: () => void;
   onClick: () => void;
@@ -78,15 +79,27 @@ function MenuItem({
   );
 }
 
-/** The item for the page being viewed, else the first one with sub-links. */
-function startingItem(nav: NavItem[]) {
-  const path = window.location.pathname;
-  const current = nav.findIndex(
-    (item) => path === item.href || path.startsWith(`${item.href}/`),
-  );
-  if (current >= 0) return current;
-  const withLinks = nav.findIndex((item) => item.children.length > 0);
-  return Math.max(withLinks, 0);
+const under = (path: string, href: string) =>
+  path === href || path.startsWith(`${href}/`);
+
+/**
+ * The main item the page at `path` belongs to: the item itself, or the one
+ * that lists the page among its sub-links (Our team sits under About). The
+ * most specific match wins; -1 when the page is in no item, as on the home
+ * page.
+ */
+export function currentItem(nav: NavItem[], path: string) {
+  let best = -1;
+  let length = 0;
+  nav.forEach((item, i) => {
+    for (const href of [item.href, ...item.children.map((c) => c.href)]) {
+      if (href.startsWith("/") && under(path, href) && href.length > length) {
+        best = i;
+        length = href.length;
+      }
+    }
+  });
+  return best;
 }
 
 /**
@@ -110,6 +123,9 @@ export function SiteMenu({
   // The overlay is attached to <body> from the first time the menu is opened.
   const [mounted, setMounted] = useState(false);
   const item = nav[active] ?? nav[0];
+  const pathname = usePathname();
+  /** The item for the page being viewed; it stays marked while others are hovered. */
+  const current = currentItem(nav, pathname);
 
   const router = useRouter();
   /** Where to go once the overlay has finished closing. */
@@ -163,7 +179,9 @@ export function SiteMenu({
           aria-expanded={open}
           aria-controls="site-menu"
           onClick={() => {
-            setActive(startingItem(nav));
+            // Open on the current page's item. On a page that is in no item
+            // (the home page) nothing is picked out until one is hovered.
+            setActive(current);
             setMounted(true);
             setOpen(true);
           }}
@@ -271,11 +289,14 @@ export function SiteMenu({
                                 <MenuItem
                                   href={entry.href}
                                   expandable={entry.children.length > 0}
+                                  aria-current={
+                                    current === i ? "true" : undefined
+                                  }
                                   onMouseEnter={() => setActive(i)}
                                   onFocus={() => setActive(i)}
                                   onClick={() => setActive(i)}
                                   className={`group flex items-baseline gap-5 text-left font-serif text-[clamp(2.25rem,min(4.2vw,6.6svh),3.75rem)] leading-[1.16] tracking-[-0.02em] transition-colors ${
-                                    active === i
+                                    active < 0 || active === i
                                       ? "text-white"
                                       : "text-white/35"
                                   }`}
@@ -284,6 +305,13 @@ export function SiteMenu({
                                     {String(i + 1).padStart(2, "0")}
                                   </span>
                                   {entry.label}
+                                  {current === i && (
+                                    <span
+                                      aria-hidden="true"
+                                      title="You are here"
+                                      className="size-2 shrink-0 self-center rounded-full bg-tan-300"
+                                    />
+                                  )}
                                   {/* Only items with sub-links point to them */}
                                   {entry.children.length > 0 && (
                                     <Glyph
@@ -304,7 +332,7 @@ export function SiteMenu({
                       </nav>
                       <motion.div variants={fade(0.45)} className="lg:pt-2">
                         <AnimatePresence mode="wait" initial={false}>
-                          {item.children.length > 0 && (
+                          {active >= 0 && item.children.length > 0 && (
                             <motion.div
                               key={active}
                               initial={{ opacity: 0, x: 14 }}
@@ -326,10 +354,15 @@ export function SiteMenu({
                                   <li key={child.label}>
                                     <Link
                                       href={child.href}
+                                      aria-current={
+                                        pathname === child.href
+                                          ? "page"
+                                          : undefined
+                                      }
                                       className="group flex items-center justify-between gap-6 border-b border-white/15 py-[clamp(0.25rem,1.1svh,0.625rem)]"
                                     >
                                       <span>
-                                        <span className="block text-[15px] font-medium group-hover:text-tan-300">
+                                        <span className="block text-[15px] font-medium group-hover:text-tan-300 group-aria-[current=page]:text-tan-300">
                                           {child.label}
                                         </span>
                                         {child.description && (

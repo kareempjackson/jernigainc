@@ -9,7 +9,7 @@ import {
   useTransform,
 } from "framer-motion";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Logo } from "@/components/brand";
 import { Glyph } from "@/components/icons";
@@ -20,7 +20,7 @@ import {
   WhoMenu,
 } from "@/components/mega-menus";
 import type { NavItem } from "@/components/site-header";
-import { SiteMenu } from "@/components/site-menu";
+import { currentItem, SiteMenu } from "@/components/site-menu";
 import type { SiteContent } from "@/content/site";
 
 /**
@@ -104,6 +104,10 @@ export function NavBar({
     if (next !== folded) setFolded(next);
   });
 
+  // The link for the page being viewed. Worked out from the full menu, which
+  // knows that Our team and Capabilities sit under About.
+  const currentHref = nav[currentItem(nav, usePathname())]?.href;
+
   const router = useRouter();
   /** True from a click on a dropdown link until the pointer leaves the item. */
   const [closing, setClosing] = useState(false);
@@ -182,11 +186,21 @@ export function NavBar({
             >
               {barNav.map((item) => {
                 const panel = panelFor(item.href);
+                const current = item.href === currentHref;
                 const label = (
                   <motion.span
                     style={{ transform: linksTransform }}
-                    className="flex items-center gap-2"
+                    className={`relative flex items-center gap-2 ${
+                      current ? "text-white" : ""
+                    }`}
                   >
+                    {/* Marks the page being viewed */}
+                    {current && (
+                      <span
+                        aria-hidden="true"
+                        className="absolute inset-x-0 -bottom-2.5 h-0.5 bg-tan-300"
+                      />
+                    )}
                     {item.label}
                     {panel && (
                       <Chevron className="transition-transform group-focus-within:rotate-180 group-hover:rotate-180" />
@@ -203,6 +217,7 @@ export function NavBar({
                     <button
                       type="button"
                       aria-haspopup="true"
+                      aria-current={current ? "true" : undefined}
                       className="flex h-full cursor-default items-center px-[18px] font-[inherit] tracking-[inherit] transition-colors hover:text-white group-focus-within:text-white group-hover:text-white"
                     >
                       {label}
@@ -222,6 +237,7 @@ export function NavBar({
                   <Link
                     key={item.label}
                     href={item.href}
+                    aria-current={current ? "page" : undefined}
                     className="flex h-full items-center px-[18px] transition-colors hover:text-white"
                   >
                     {label}
