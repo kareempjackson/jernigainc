@@ -1,6 +1,7 @@
 "use client";
 
 import { type ReactNode, useEffect } from "react";
+import { RevealObserver } from "@/components/motion";
 
 /**
  * Wraps each page's content. Unlike the layout, a template is created afresh
@@ -12,5 +13,11 @@ export default function SiteTemplate({ children }: { children: ReactNode }) {
     delete document.documentElement.dataset.leaving;
   }, []);
 
-  return <div className="page-arrive">{children}</div>;
+  return (
+    <div className="page-arrive">
+      {/* Scroll-triggered reveals (see "Motion" in globals.css). */}
+      <RevealObserver />
+      {children}
+    </div>
+  );
 }

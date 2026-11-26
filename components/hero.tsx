@@ -1,7 +1,15 @@
 import { homeDefaults, type HomeContent } from "@/content/home";
 import Image from "next/image";
 import Link from "next/link";
-import { BlockButton, BloomGrid, Chip, Flower } from "@/components/brand";
+import type { CSSProperties } from "react";
+import {
+  BlockButton,
+  BloomGrid,
+  Chip,
+  Float,
+  Flower,
+} from "@/components/brand";
+import { Parallax } from "@/components/motion";
 import { Glyph, isGlyph } from "@/components/icons";
 
 /**
@@ -27,29 +35,47 @@ export function Hero({
       className={`relative overflow-hidden bg-blue-700 text-white ${className}`}
     >
       {/* Petal outlines, cropped at the frame edge */}
-      <Flower
-        outline
-        size={420}
-        className="pointer-events-none absolute -right-32 -top-20 hidden rotate-12 text-white/30 lg:block"
-      />
+      {/* Drifts at a third of the scroll speed and turns 15° as it goes. */}
+      <Parallax
+        shift={0.7}
+        rotate={15}
+        className="pointer-events-none absolute -right-32 -top-20 hidden lg:block"
+      >
+        <Flower outline size={420} className="rotate-12 text-white/30" />
+      </Parallax>
 
       <div className="relative mx-auto grid h-full max-w-[1440px] gap-x-16 gap-y-12 px-6 py-12 md:px-16 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:grid-rows-[minmax(0,1fr)] lg:pb-10 lg:pt-16">
         <div className="flex min-h-0 flex-col lg:h-full lg:max-h-[580px] lg:self-center">
-          <p className="flex items-center gap-2.5 text-sm text-white/85">
+          <p className="fade-up flex items-center gap-2.5 text-sm text-white/85">
             <Glyph name="check" size={16} className="text-lilac-300" />
             {c.eyebrow}
           </p>
           <h1 className="mt-4 font-serif text-[clamp(2.5rem,min(5.6vw,9.5svh),5.25rem)] leading-[0.98] tracking-[-0.02em]">
-            {c.title.map((line) => (
-              <span key={line} className="block">
-                {line}
+            {/* Each line rises out of its own mask, one after another. */}
+            {c.title.map((line, i) => (
+              <span
+                key={line}
+                className="-mb-[0.16em] block overflow-hidden pb-[0.16em]"
+              >
+                <span
+                  className="line-rise"
+                  style={{ "--n": i } as CSSProperties}
+                >
+                  {line}
+                </span>
               </span>
             ))}
           </h1>
-          <p className="mt-6 max-w-[30rem] text-base leading-[1.55] text-white/80">
+          <p
+            className="fade-up mt-6 max-w-[30rem] text-base leading-[1.55] text-white/80"
+            style={{ "--delay": "450ms" } as CSSProperties}
+          >
             {c.body}
           </p>
-          <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-5 lg:mt-auto lg:pt-6">
+          <div
+            className="fade-up mt-8 flex flex-wrap items-center gap-x-8 gap-y-5 lg:mt-auto lg:pt-6"
+            style={{ "--delay": "550ms" } as CSSProperties}
+          >
             <BlockButton href={c.primaryHref} variant="light">
               {c.primaryLabel}
             </BlockButton>
@@ -73,7 +99,10 @@ export function Hero({
         </div>
 
         <div className="relative min-h-0 lg:ml-10 lg:max-h-[580px] lg:self-center lg:h-full">
-          <div className="relative aspect-[4/3] overflow-hidden bg-blue-900 lg:aspect-auto lg:h-full">
+          <div
+            className="fade-up relative aspect-[4/3] overflow-hidden bg-blue-900 lg:aspect-auto lg:h-full"
+            style={{ "--rise": "32px", "--delay": "300ms" } as CSSProperties}
+          >
             {imageSrc ? (
               <Image
                 src={imageSrc}
@@ -107,25 +136,28 @@ export function Hero({
           {/* Data chips overlap the frame edge */}
           <div className="absolute left-3 top-4 flex flex-col items-start gap-2.5 sm:-left-10 sm:top-6">
             {c.chips.slice(0, 2).map((chip, i) => (
-              <Chip
-                key={chip.label}
-                size="lg"
-                icon={isGlyph(chip.icon) ? chip.icon : undefined}
-                figure={chip.figure}
-                label={chip.label}
-                className={i === 0 ? "bg-navy-100" : "bg-lilac-200"}
-              />
+              <Float key={chip.label} index={i}>
+                <Chip
+                  size="lg"
+                  icon={isGlyph(chip.icon) ? chip.icon : undefined}
+                  figure={chip.figure}
+                  label={chip.label}
+                  className={i === 0 ? "bg-navy-100" : "bg-lilac-200"}
+                />
+              </Float>
             ))}
           </div>
           <div className="absolute right-3 top-[46%] hidden sm:-right-4 sm:block">
             {c.chips[2] && (
-              <Chip
-                size="lg"
-                icon={isGlyph(c.chips[2].icon) ? c.chips[2].icon : undefined}
-                figure={c.chips[2].figure}
-                label={c.chips[2].label}
-                className="bg-white"
-              />
+              <Float index={2}>
+                <Chip
+                  size="lg"
+                  icon={isGlyph(c.chips[2].icon) ? c.chips[2].icon : undefined}
+                  figure={c.chips[2].figure}
+                  label={c.chips[2].label}
+                  className="bg-white"
+                />
+              </Float>
             )}
           </div>
         </div>

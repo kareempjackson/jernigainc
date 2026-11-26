@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { Glyph, type GlyphName, isGlyph } from "@/components/icons";
 
 const LOGO_SRC = "/logo/jernigan-logo-white.png";
@@ -157,10 +157,16 @@ export function Photo({
 export function GuideFrame({
   children,
   lineClass = "border-blue-900/15",
+  orbitClass,
   className = "",
 }: {
   children: ReactNode;
   lineClass?: string;
+  /**
+   * Draw the circle as an orbit that traces itself when it scrolls into view
+   * and then turns slowly. Pass its colour as a text-* class.
+   */
+  orbitClass?: string;
   className?: string;
 }) {
   return (
@@ -173,12 +179,75 @@ export function GuideFrame({
         aria-hidden="true"
         className={`pointer-events-none absolute inset-x-0 bottom-[9.5%] top-[9.5%] border-y ${lineClass}`}
       />
-      <span
-        aria-hidden="true"
-        className={`pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[88%] -translate-x-1/2 -translate-y-1/2 rounded-full border ${lineClass}`}
-      />
+      {orbitClass ? (
+        <span
+          aria-hidden="true"
+          data-reveal="draw"
+          data-inview-watch=""
+          className={`pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[88%] -translate-x-1/2 -translate-y-1/2 ${orbitClass}`}
+        >
+          <svg viewBox="0 0 100 100" className="size-full overflow-visible">
+            <circle
+              cx={50}
+              cy={50}
+              r={50}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1}
+              vectorEffect="non-scaling-stroke"
+              pathLength={1}
+              transform="rotate(-90 50 50)"
+              className="orbit-line"
+            />
+            {/* A bead on the ring, so the slow turn can be seen. */}
+            <circle
+              cx={50}
+              cy={0}
+              r={1}
+              fill="currentColor"
+              className="orbit-dot"
+            />
+          </svg>
+        </span>
+      ) : (
+        <span
+          aria-hidden="true"
+          className={`pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[88%] -translate-x-1/2 -translate-y-1/2 rounded-full border ${lineClass}`}
+        />
+      )}
       {children}
     </div>
+  );
+}
+
+/**
+ * Floats its children in from 32px below on load, then bobs gently (±6px,
+ * 6s). Give siblings different `index` values so they move out of step.
+ */
+export function Float({
+  children,
+  index = 0,
+}: {
+  children: ReactNode;
+  index?: number;
+}) {
+  return (
+    <span
+      className="fade-up inline-flex"
+      style={
+        {
+          "--rise": "32px",
+          "--delay": `${500 + index * 120}ms`,
+        } as CSSProperties
+      }
+    >
+      <span
+        className="bob inline-flex"
+        style={{ animationDelay: `${index * -1.7}s` }}
+      >
+        {children}
+      </span>
+    </span>
   );
 }
 
@@ -247,6 +316,7 @@ export function BloomGrid({
   budClass,
   bloomClass,
   animated = false,
+  bloomIn,
   className = "",
 }: {
   cols: number;
@@ -254,6 +324,11 @@ export function BloomGrid({
   budClass: string;
   bloomClass: string;
   animated?: boolean;
+  /**
+   * Open the flowers as the grid scrolls into view: "sequence" goes one by
+   * one from top left to bottom right, "wave" sweeps column by column.
+   */
+  bloomIn?: "sequence" | "wave";
   className?: string;
 }) {
   const size = 24;
@@ -268,11 +343,13 @@ export function BloomGrid({
           key={i}
           className={`${bloom ? bloomClass : budClass} ${
             bloom && animated ? "bloom-pulse" : ""
-          }`}
+          } ${bloomIn ? "bloom-cell" : ""}`}
           style={
             bloom && animated
               ? { animationDelay: `${(i % 7) * -0.7}s` }
-              : undefined
+              : bloomIn
+                ? ({ "--n": bloomIn === "wave" ? c : i } as CSSProperties)
+                : undefined
           }
         >
           <Petals x={c * step} y={r * step} />
@@ -285,6 +362,12 @@ export function BloomGrid({
       viewBox={`0 0 ${cols * step - size * 0.15} ${rows * step - size * 0.15}`}
       aria-hidden="true"
       className={className}
+      data-reveal={bloomIn ? "bloom" : undefined}
+      style={
+        bloomIn === "wave"
+          ? ({ "--stagger": "60ms" } as CSSProperties)
+          : undefined
+      }
     >
       {cells}
     </svg>
@@ -415,7 +498,7 @@ export function BlockButton({
         {children}
       </span>
       <span
-        className={`flex size-12 items-center justify-center transition-transform group-hover:translate-x-0.5 ${styles[1]}`}
+        className={`flex size-12 items-center justify-center transition-transform duration-200 ease-out group-hover:translate-x-1 ${styles[1]}`}
       >
         <Glyph name={icon} size={18} />
       </span>

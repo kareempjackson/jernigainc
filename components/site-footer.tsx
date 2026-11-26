@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { TreeMark } from "@/components/tree-mark";
 import { Mark } from "@/components/brand";
 import { Glyph } from "@/components/icons";
@@ -27,6 +28,23 @@ function Bloom({ className = "" }: { className?: string }) {
   );
 }
 
+/** One line of the lockup, split so the letters can rise one by one. */
+function Letters({ text, from }: { text: string; from: number }) {
+  return (
+    <span aria-hidden="true" className="block">
+      {[...text].map((letter, i) => (
+        <span
+          key={i}
+          className="ltr"
+          style={{ "--n": from + i } as CSSProperties}
+        >
+          {letter === " " ? "\u00a0" : letter}
+        </span>
+      ))}
+    </span>
+  );
+}
+
 function Column({ title, links }: { title: string; links: FooterLink[] }) {
   return (
     <div>
@@ -34,7 +52,10 @@ function Column({ title, links }: { title: string; links: FooterLink[] }) {
       <ul className="mt-5 space-y-3.5">
         {links.map((link) => (
           <li key={link.label}>
-            <Link href={link.href} className="text-white/85 hover:text-white">
+            <Link
+              href={link.href}
+              className="link-underline text-white/85 hover:text-white"
+            >
               {link.label}
             </Link>
           </li>
@@ -58,7 +79,10 @@ export function SiteFooter({
     <footer className="bg-navy-900 text-[15px] text-white">
       <div className="mx-auto max-w-[1440px] px-6 pb-10 pt-20 md:px-16 lg:pt-28">
         <div className="grid gap-x-12 gap-y-14 lg:grid-cols-[minmax(0,2.4fr)_minmax(0,1fr)]">
-          <div className="grid grid-cols-2 gap-x-10 gap-y-12 md:grid-cols-[auto_auto_auto_auto] md:justify-between">
+          <div
+            className="grid grid-cols-2 gap-x-10 gap-y-12 md:grid-cols-[auto_auto_auto_auto] md:justify-between"
+            data-reveal="group"
+          >
             <Column title="Explore" links={explore} />
             <Column title="Services" links={services} />
 
@@ -75,7 +99,7 @@ export function SiteFooter({
                     {item.href ? (
                       <a
                         href={item.href}
-                        className="break-all text-white/85 hover:text-white"
+                        className="link-underline break-all text-white/85 hover:text-white"
                       >
                         {item.label}
                       </a>
@@ -96,7 +120,7 @@ export function SiteFooter({
                       href={link.href}
                       className="inline-flex items-center gap-2 text-white/85 hover:text-white"
                     >
-                      {link.label}
+                      <span className="link-underline">{link.label}</span>
                       <Glyph name="arrow-up-right" size={11} />
                     </a>
                   </li>
@@ -108,6 +132,7 @@ export function SiteFooter({
           {/* Bloom marks */}
           <div
             aria-hidden="true"
+            data-reveal="pop-group"
             className="grid w-full max-w-[370px] grid-cols-2 gap-3.5 lg:-mt-6 lg:justify-self-end"
           >
             {[0, 1, 2, 3].map((i) => (
@@ -130,12 +155,13 @@ export function SiteFooter({
           <Link
             href="/"
             aria-label="Jernigan & Associates, home"
+            data-reveal="letters"
             className="flex items-center justify-between whitespace-nowrap text-[14.8cqw]"
           >
-            <TreeMark className="h-[1.78em] shrink-0" />
+            <TreeMark className="ltr h-[1.78em] shrink-0" />
             <span className="font-serif leading-[0.84] tracking-[-0.025em]">
-              <span className="block">Jernigan &amp;</span>
-              <span className="block">Associates</span>
+              <Letters text="Jernigan &" from={1} />
+              <Letters text="Associates" from={11} />
             </span>
           </Link>
         </div>
@@ -146,7 +172,10 @@ export function SiteFooter({
             {legal.map((link, i) => (
               <li key={link.label} className="flex items-center gap-4">
                 {i > 0 && <span aria-hidden="true">·</span>}
-                <Link href={link.href} className="hover:text-white">
+                <Link
+                  href={link.href}
+                  className="link-underline hover:text-white"
+                >
                   {link.label}
                 </Link>
               </li>

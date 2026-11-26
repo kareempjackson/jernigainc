@@ -39,6 +39,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className={`${hedvig.variable} ${inter.variable} h-full antialiased`}
+      // <html> gains attributes before React loads (the entrance's data-intro).
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

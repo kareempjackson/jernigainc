@@ -1,6 +1,8 @@
 import { homeDefaults, type HomeContent } from "@/content/home";
 import Image from "next/image";
+import type { CSSProperties } from "react";
 import { BlockButton } from "@/components/brand";
+import { Parallax } from "@/components/motion";
 
 /**
  * "Partnership over prescription": full-bleed photo with the 4 R's card and
@@ -24,13 +26,20 @@ export function Partnership({
     <section className="relative overflow-hidden bg-navy-700 text-white">
       {imageSrc ? (
         <>
-          <Image
-            src={imageSrc}
-            alt={imageAlt}
-            fill
-            sizes="100vw"
-            className="object-cover"
-          />
+          {/* 115% tall, so it can travel more slowly than the page. */}
+          <Parallax
+            shift={0.15}
+            bounded
+            className="absolute inset-x-0 -bottom-[7.5%] -top-[7.5%]"
+          >
+            <Image
+              src={imageSrc}
+              alt={imageAlt}
+              fill
+              sizes="100vw"
+              className="object-cover"
+            />
+          </Parallax>
           <div className="absolute inset-0 bg-gradient-to-t from-navy-900/85 via-navy-900/45 to-navy-900/55" />
         </>
       ) : (
@@ -43,7 +52,7 @@ export function Partnership({
         <p className="type-eyebrow mb-5 font-normal text-white/80">
           {c.eyebrow}
         </p>
-        <h2 className="type-h2">
+        <h2 className="type-h2" data-reveal="group">
           {c.title.map((line) => (
             <span key={line} className="block">
               {line}
@@ -52,7 +61,11 @@ export function Partnership({
         </h2>
 
         <div className="mt-20 grid items-end gap-x-16 gap-y-14 lg:mt-auto lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)]">
-          <div className="max-w-[380px] bg-white p-7 text-blue-900">
+          <div
+            className="max-w-[380px] bg-white p-7 text-blue-900"
+            data-reveal="rise"
+            style={{ "--rise": "40px" } as CSSProperties}
+          >
             <h3 className="font-serif text-[1.75rem] leading-tight tracking-[-0.01em]">
               {c.cardTitle}
             </h3>
@@ -72,7 +85,11 @@ export function Partnership({
             </ul>
           </div>
 
-          <div className="lg:col-start-3">
+          <div
+            className="lg:col-start-3"
+            data-reveal="rise"
+            style={{ "--rise": "40px", "--delay": "80ms" } as CSSProperties}
+          >
             <p className="font-serif text-[clamp(1.75rem,2.8vw,2.5rem)] leading-[1.08] tracking-[-0.015em]">
               {c.statement}
             </p>

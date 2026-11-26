@@ -250,24 +250,33 @@ export const homeDefaults = {
       {
         name: "Dr. Maryam M. Jernigan-Noesi",
         role: "Founder · Psychologist",
+        /** Shown on hover. Leave blank to show nothing. */
+        bio: "Licensed psychologist, clinician-scientist and award-winning scholar.",
+        linkedin: "",
         href: "/our-team",
         image: IMAGE,
       },
       {
         name: "Team member",
         role: "Senior consultant",
+        bio: "",
+        linkedin: "",
         href: "/our-team",
         image: IMAGE,
       },
       {
         name: "Team member",
         role: "Research lead",
+        bio: "",
+        linkedin: "",
         href: "/our-team",
         image: IMAGE,
       },
       {
         name: "Team member",
         role: "Facilitator",
+        bio: "",
+        linkedin: "",
         href: "/our-team",
         image: IMAGE,
       },

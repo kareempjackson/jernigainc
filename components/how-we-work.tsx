@@ -23,7 +23,10 @@ export function HowWeWork({
   }));
   return (
     <section className="grid bg-lilac-200 text-blue-900 lg:grid-cols-[minmax(0,0.74fr)_minmax(0,1fr)]">
-      <div className="relative min-h-[320px] bg-tan-200 lg:min-h-[620px]">
+      <div
+        className="relative min-h-[320px] bg-tan-200 lg:min-h-[620px]"
+        data-reveal="wipe"
+      >
         {imageSrc ? (
           <Image
             src={imageSrc}
@@ -50,11 +53,14 @@ export function HowWeWork({
         />
 
         <div className="relative flex h-full max-w-[820px] flex-col px-6 py-16 md:px-16 lg:py-24">
-          <h2 className="font-serif text-[clamp(2rem,3.2vw,2.75rem)] leading-[1.04] tracking-[-0.015em]">
+          <h2
+            className="font-serif text-[clamp(2rem,3.2vw,2.75rem)] leading-[1.04] tracking-[-0.015em]"
+            data-reveal="rise"
+          >
             {c.title}
           </h2>
 
-          <ol className="mt-12 space-y-9">
+          <ol className="mt-12 space-y-9" data-reveal="group">
             {steps.map((step) => (
               <li key={step.title} className="flex gap-5">
                 <span className="mt-0.5 shrink-0">{step.icon}</span>
@@ -70,7 +76,7 @@ export function HowWeWork({
             ))}
           </ol>
 
-          <div className="mt-14 lg:mt-auto lg:pt-14">
+          <div className="mt-14 lg:mt-auto lg:pt-14" data-reveal="rise">
             <BlockButton href={c.ctaHref}>{c.ctaLabel}</BlockButton>
           </div>
         </div>

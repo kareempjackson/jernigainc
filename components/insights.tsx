@@ -47,7 +47,7 @@ export function Insights({
             <p className="type-eyebrow mb-5 font-normal text-blue-900/70">
               {c.eyebrow}
             </p>
-            <h2 className="type-h2">
+            <h2 className="type-h2" data-reveal="group">
               {c.title.map((line) => (
                 <span key={line} className="block">
                   {line}
@@ -55,20 +55,33 @@ export function Insights({
               ))}
             </h2>
           </div>
-          <p className="max-w-sm text-blue-900/75 lg:pb-2">{c.body}</p>
+          <p className="max-w-sm text-blue-900/75 lg:pb-2" data-reveal="rise">
+            {c.body}
+          </p>
         </div>
 
-        <ul className="mt-16 grid gap-x-4 gap-y-12 sm:grid-cols-2 lg:mt-20 lg:grid-cols-4">
+        {/* A swipeable row on phones, a grid from there up. */}
+        <ul
+          className="-mx-6 mt-16 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-x-4 sm:gap-y-12 sm:overflow-visible sm:px-0 lg:mt-20 lg:grid-cols-4 [&::-webkit-scrollbar]:hidden"
+          data-reveal="group"
+        >
           {topics.map((item) => (
-            <li key={item.topic}>
+            <li
+              key={item.topic}
+              className="w-[78vw] shrink-0 snap-start sm:w-auto"
+            >
               <Link href={item.href} className="group flex h-full flex-col">
-                <span className={`relative block aspect-[4/3] ${item.tone}`}>
-                  <Photo
-                    src={item.imageSrc}
-                    alt=""
-                    slot={item.topic}
-                    sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-                  />
+                <span
+                  className={`relative block aspect-[4/3] overflow-hidden ${item.tone}`}
+                >
+                  <span className="absolute inset-0 transition-transform duration-200 ease-out group-hover:scale-[1.04]">
+                    <Photo
+                      src={item.imageSrc}
+                      alt=""
+                      slot={item.topic}
+                      sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                    />
+                  </span>
                 </span>
                 <span className="mt-7 block min-h-12 max-w-[20rem] text-[15px] leading-snug text-blue-900/80">
                   {item.blurb}
@@ -77,7 +90,7 @@ export function Insights({
                   <span className="flex h-10 flex-1 items-center bg-paper-200 px-3.5 transition-colors group-hover:bg-blue-900 group-hover:text-white">
                     {item.topic}
                   </span>
-                  <span className="flex size-10 items-center justify-center bg-paper-200 transition-colors group-hover:bg-blue-900 group-hover:text-white">
+                  <span className="flex size-10 items-center justify-center bg-paper-200 transition-[translate,background-color,color] duration-200 ease-out group-hover:translate-x-1 group-hover:bg-blue-900 group-hover:text-white">
                     <Glyph name="arrow-right" size={15} />
                   </span>
                 </span>

@@ -2,6 +2,7 @@ import { homeDefaults, type HomeContent } from "@/content/home";
 import Image from "next/image";
 
 import { BlockButton, Flower, GuideFrame, Mark } from "@/components/brand";
+import { Accordion } from "@/components/accordion";
 import { Glyph } from "@/components/icons";
 
 /**
@@ -74,44 +75,22 @@ export function SciencePractice({
         </GuideFrame>
 
         <div className="flex flex-col lg:py-6">
-          <h2 className="type-h2">
+          <h2 className="type-h2" data-reveal="group">
             {c.title.map((line) => (
               <span key={line} className="block">
                 {line}
               </span>
             ))}
           </h2>
-          <p className="mt-6 text-blue-900/75">{c.body}</p>
-          <div className="mt-8">
+          <p className="mt-6 text-blue-900/75" data-reveal="rise">
+            {c.body}
+          </p>
+          <div className="mt-8" data-reveal="rise">
             <BlockButton href={c.ctaHref}>{c.ctaLabel}</BlockButton>
           </div>
 
-          <div className="mt-14 space-y-3 lg:mt-auto lg:pt-14">
-            {reasons.map((reason) => (
-              <details key={reason.title} className="group bg-white">
-                <summary className="flex cursor-pointer list-none items-center gap-4 px-5 py-5 [&::-webkit-details-marker]:hidden">
-                  <span className="shrink-0">{reason.icon}</span>
-                  <span className="text-[15px]">{reason.title}</span>
-                  <svg
-                    viewBox="0 0 10 6"
-                    width={11}
-                    height={7}
-                    aria-hidden="true"
-                    className="ml-auto shrink-0 transition-transform group-open:rotate-180"
-                  >
-                    <path
-                      d="M1 1l4 4 4-4"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={1.5}
-                    />
-                  </svg>
-                </summary>
-                <p className="px-5 pb-6 pl-[3.25rem] text-sm leading-relaxed text-blue-900/75">
-                  {reason.body}
-                </p>
-              </details>
-            ))}
+          <div className="mt-14 lg:mt-auto lg:pt-14" data-reveal="rise">
+            <Accordion items={reasons} />
           </div>
         </div>
       </div>

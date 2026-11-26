@@ -3,6 +3,7 @@ import { homeDefaults, type HomeContent } from "@/content/home";
 import Link from "next/link";
 import { BlockButton, BloomGrid, Mark, Photo } from "@/components/brand";
 import { Glyph } from "@/components/icons";
+import { CountUp } from "@/components/motion";
 
 const SCALE_MAX = 50;
 
@@ -37,13 +38,14 @@ export function WhoWeAre({
         rows={3}
         budClass="text-paper-200"
         bloomClass="text-paper-200"
+        bloomIn="sequence"
         className="pointer-events-none absolute -right-28 top-16 hidden w-[380px] xl:block"
       />
 
       <div className="relative mx-auto max-w-[1440px] px-6 py-20 md:px-16 lg:py-28">
         {/* Story + still */}
         <div className="grid items-center gap-x-20 gap-y-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
-          <div>
+          <div data-reveal="group">
             <p className="mb-5 flex items-center gap-3 text-sm">
               <span className="size-1.5 rounded-full bg-blue-900" />
               {c.eyebrow}
@@ -59,25 +61,45 @@ export function WhoWeAre({
             </div>
           </div>
 
-          <Link
-            href="#film"
-            className="group relative block aspect-[1.7] bg-blue-200"
+          {/* The film docks here on scroll (see film-scroll.tsx). Until it
+              does, and wherever it does not, this is a still that links to it. */}
+          <div
+            id="who-film-slot"
+            className="group relative aspect-[1.7] bg-blue-200"
           >
-            <Photo
-              src={imageSrc}
-              alt={imageAlt}
-              slot="Workshop still"
-              sizes="(min-width: 1024px) 45vw, 100vw"
-            />
-            <span className="absolute inset-x-0 bottom-0 flex items-center gap-3 p-5">
-              <span className="flex size-12 items-center justify-center rounded-full bg-lilac-200 transition-colors group-hover:bg-white">
-                <Glyph name="play" size={18} className="ml-0.5" />
+            <Link
+              href="#film"
+              className="absolute inset-0 group-data-[docked]:invisible"
+            >
+              <Photo
+                src={imageSrc}
+                alt={imageAlt}
+                slot="Workshop still"
+                sizes="(min-width: 1024px) 45vw, 100vw"
+              />
+              <span className="absolute inset-x-0 bottom-0 flex items-center gap-3 p-5">
+                <span className="flex size-12 items-center justify-center rounded-full bg-lilac-200 transition-colors group-hover:bg-white">
+                  <Glyph name="play" size={18} className="ml-0.5" />
+                </span>
+                <span className={`text-sm ${imageSrc ? "text-white" : ""}`}>
+                  {c.watchLabel}
+                </span>
               </span>
-              <span className={`text-sm ${imageSrc ? "text-white" : ""}`}>
-                {c.watchLabel}
+            </Link>
+            {/* Over the docked film: label and progress line. */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-x-0 bottom-0 z-20 opacity-[var(--film-dock,0)]"
+            >
+              <p className="m-4 inline-flex items-center gap-2 bg-white px-3 py-2 text-xs text-blue-900">
+                <span className="size-1.5 rounded-full bg-blue-500" />
+                Now playing
+              </p>
+              <span className="block h-[3px] bg-white/30">
+                <span className="block h-full origin-left scale-x-[var(--film-progress,0)] bg-tan-300" />
               </span>
-            </span>
-          </Link>
+            </div>
+          </div>
         </div>
 
         {/* Experience + where we work */}
@@ -87,16 +109,24 @@ export function WhoWeAre({
               {c.experienceLabel}
             </h3>
 
-            <dl className="mt-9 space-y-7">
+            <dl className="mt-9 space-y-7" data-reveal="group">
               {experience.map((row) => (
                 <div key={row.label}>
                   <dt className="text-sm">{row.label}</dt>
-                  <dd className="mt-2 h-10 bg-paper-200/70">
+                  {/* The bar fills, its marker line sliding with it. */}
+                  <dd
+                    className="mt-2 h-10 overflow-hidden bg-paper-200/70"
+                    data-reveal="slide"
+                  >
                     <span
                       className={`flex h-full items-center justify-end border-r-[3px] border-blue-900 pr-4 font-serif text-2xl ${row.bar}`}
                       style={{ width: `${(row.years / SCALE_MAX) * 100}%` }}
                     >
-                      <span className="whitespace-nowrap">{row.figure}</span>
+                      <CountUp
+                        value={row.figure}
+                        duration={900}
+                        className="whitespace-nowrap"
+                      />
                     </span>
                   </dd>
                 </div>
@@ -118,12 +148,15 @@ export function WhoWeAre({
               ))}
             </ol>
 
-            <dl className="mt-14 flex flex-wrap gap-x-16 gap-y-8">
+            <dl
+              className="mt-14 flex flex-wrap gap-x-16 gap-y-8"
+              data-reveal="group"
+            >
               {stats.map(([figure, label]) => (
                 <div key={label} className="flex flex-col-reverse">
                   <dt className="mt-2 text-xs text-blue-900/70">{label}</dt>
                   <dd className="font-serif text-4xl tracking-[-0.015em]">
-                    {figure}
+                    <CountUp value={figure} />
                   </dd>
                 </div>
               ))}
@@ -134,7 +167,7 @@ export function WhoWeAre({
             <h3 className="type-eyebrow font-normal text-blue-900/70">
               {c.sectorsLabel}
             </h3>
-            <ul className="mt-4">
+            <ul className="mt-4" data-reveal="group">
               {sectors.map((sector) => (
                 <li
                   key={sector.name}

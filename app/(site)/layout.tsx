@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { SiteIntro } from "@/components/site-intro";
+import { SiteIntroBoot } from "@/components/site-intro-boot";
 import { getServices, getSite, getWhoWeServe } from "@/sanity/lib/content";
 
 /**
@@ -50,6 +52,9 @@ export default async function SiteLayout({
 
   return (
     <>
+      {/* First-visit entrance; covers the site until the tree opens. */}
+      <SiteIntroBoot />
+      <SiteIntro />
       <SiteHeader
         nav={nav}
         menu={site.menu}
