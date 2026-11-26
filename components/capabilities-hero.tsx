@@ -1,39 +1,28 @@
+import {
+  capabilitiesDefaults,
+  type CapabilitiesContent,
+} from "@/content/capabilities";
 import Link from "next/link";
 import { BlockButton, Flower } from "@/components/brand";
 import { Glyph } from "@/components/icons";
-
-const disciplines = ["Training", "Consultation", "Program evaluation"];
-
-/** Contracting identifiers, in the order a contracting officer looks for them. */
-const corporateData = [
-  ["UEI", "RJV7R1V5MP14"],
-  ["CAGE", "8T0G5"],
-  ["Status", "SAM registration active"],
-  ["Designation", "SBA-certified WOSB"],
-  ["Primary NAICS", "541611"],
-  ["Primary PSC", "U008"],
-] as const;
-
-const audiences = [
-  "Federal agencies",
-  "Health care systems",
-  "Educational institutions",
-  "Corporations",
-];
 
 /**
  * Capabilities page hero: positioning statement and calls to action on the
  * left, the corporate data card (UEI, CAGE, NAICS…) on the right.
  */
 export function CapabilitiesHero({
-  statementHref = "/capabilities-statement.pdf",
-  contactHref = "#contact",
+  content: c = capabilitiesDefaults.hero,
+  statementHref,
+  contactHref,
 }: {
+  content?: CapabilitiesContent["hero"];
   /** The downloadable capabilities statement (a file under /public). */
   statementHref?: string;
   /** Where "Contact our POC" leads. Defaults to the contact card further down. */
   contactHref?: string;
 }) {
+  const { disciplines, audiences } = c;
+  const corporateData = c.corporateData.map((d) => [d.label, d.value] as const);
   return (
     <section className="relative overflow-hidden bg-blue-700 text-white lg:flex lg:min-h-[calc(100svh-120px)] lg:flex-col">
       {/* Petal outlines, cropped at the frame edge */}
@@ -73,39 +62,37 @@ export function CapabilitiesHero({
             </ul>
 
             <h1 className="mt-[clamp(1rem,calc(4svh_-_13px),2rem)] font-serif text-[clamp(2rem,min(3.7vw,6.4svh),3.5rem)] leading-[0.98] tracking-[-0.02em]">
-              <span className="block">Psychological science,</span>
-              <span className="block">Applied to</span>
-              <span className="block">Organizational Practice</span>
+              {c.title.map((line) => (
+                <span key={line} className="block">
+                  {line}
+                </span>
+              ))}
             </h1>
 
             <p className="mt-[clamp(1.25rem,calc(5svh_-_16px),2.5rem)] max-w-[34rem] text-[15px] leading-[1.55] text-white/90">
-              Jernigan and Associates is a Georgia consultancy applying
-              psychological and educational science to organizational practice
-              for federal agencies, health care systems, educational
-              institutions, and corporations.
+              {c.body}
             </p>
             <p className="mt-[clamp(0.75rem,calc(3svh_-_10px),1.5rem)] max-w-[34rem] text-[15px] leading-[1.55] text-white/65">
-              Services span consultation, assessment, program development and
-              evaluation, strategic planning, professional development,
-              curriculum design, applied research, and clinical consultation and
-              supervision.
+              {c.bodySecondary}
             </p>
 
             <div className="mt-[clamp(1.5rem,calc(8svh_-_34px),3.5rem)] flex flex-wrap gap-x-8 gap-y-3">
-              <BlockButton href={statementHref} variant="tan">
-                Download capabilities statement
+              <BlockButton href={statementHref ?? c.downloadHref} variant="tan">
+                {c.downloadLabel}
               </BlockButton>
               <BlockButton
-                href={contactHref}
+                href={contactHref ?? c.contactHref}
                 variant="light"
                 icon="arrow-up-right"
               >
-                Contact our POC
+                {c.contactLabel}
               </BlockButton>
             </div>
 
             <div className="mt-[clamp(1.5rem,calc(8svh_-_34px),3.5rem)]">
-              <h2 className="type-eyebrow text-xs text-white/85">Who we serve</h2>
+              <h2 className="type-eyebrow text-xs text-white/85">
+                {c.audiencesLabel}
+              </h2>
               <ul className="mt-2.5 flex flex-wrap gap-2">
                 {audiences.map((audience) => (
                   <li
@@ -126,11 +113,9 @@ export function CapabilitiesHero({
             <div className="flex items-center justify-between gap-6 bg-tan-300 px-8 py-4">
               <div>
                 <h2 id="corporate-data" className="type-eyebrow text-xs">
-                  Corporate data
+                  {c.dataTitle}
                 </h2>
-                <p className="mt-1.5 text-sm leading-tight">
-                  Registered and ready to contract
-                </p>
+                <p className="mt-1.5 text-sm leading-tight">{c.dataSubtitle}</p>
               </div>
               <Glyph name="check" size={18} className="shrink-0" />
             </div>

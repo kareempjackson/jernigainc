@@ -5,21 +5,21 @@ import { CapabilitiesDifferentiators } from "@/components/capabilities-different
 import { CapabilitiesHero } from "@/components/capabilities-hero";
 import { CapabilitiesPastPerformance } from "@/components/capabilities-past-performance";
 import { CtaBand } from "@/components/cta-band";
+import { getCapabilities } from "@/sanity/lib/content";
 
-export const metadata: Metadata = {
-  title: "Capabilities · Jernigan & Associates",
-  description:
-    "Corporate data, registrations and capabilities statement for Jernigan and Associates, an SBA-certified WOSB applying psychological and educational science to organizational practice.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return (await getCapabilities()).seo;
+}
 
-export default function CapabilitiesPage() {
+export default async function CapabilitiesPage() {
+  const c = await getCapabilities();
   return (
     <>
-      <CapabilitiesHero />
-      <CapabilitiesCompetencies />
-      <CapabilitiesDifferentiators />
-      <CapabilitiesPastPerformance />
-      <CapabilitiesContracting />
+      <CapabilitiesHero content={c.hero} />
+      <CapabilitiesCompetencies content={c.competencies} />
+      <CapabilitiesDifferentiators content={c.differentiators} />
+      <CapabilitiesPastPerformance content={c.pastPerformance} />
+      <CapabilitiesContracting content={c.contracting} />
       <CtaBand />
     </>
   );

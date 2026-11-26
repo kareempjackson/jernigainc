@@ -1,76 +1,35 @@
-import type { ReactNode } from "react";
+import { homeDefaults, type HomeContent } from "@/content/home";
+
 import Link from "next/link";
-import { BlockButton, BloomGrid, Flower, Photo } from "@/components/brand";
+import { BlockButton, BloomGrid, Mark, Photo } from "@/components/brand";
 import { Glyph } from "@/components/icons";
 
 const SCALE_MAX = 50;
-
-const experience = [
-  {
-    label: "Dr. Jernigan-Noesi’s clinical and research practice",
-    figure: "20+ years",
-    years: 20,
-    bar: "bg-navy-100",
-  },
-  {
-    label: "Jernigan & Associates, founded 2008",
-    figure: "18 years",
-    years: 18,
-    bar: "bg-blue-200",
-  },
-  {
-    label: "Collective experience across our consultants",
-    figure: "50+ years",
-    years: 50,
-    bar: "bg-lilac-200",
-  },
-];
-
-const stats = [
-  ["100+", "organizations served"],
-  ["35,000+", "professionals trained"],
-  ["WOSB", "women-owned, certified"],
-] as const;
-
-const sectors: { icon: ReactNode; name: string; detail: string }[] = [
-  {
-    icon: <Flower size={18} />,
-    name: "Education",
-    detail: "Early childhood, K–12 and higher education",
-  },
-  {
-    icon: <Glyph name="cross" size={18} />,
-    name: "Behavioral health",
-    detail: "Clinics, counseling centers and care teams",
-  },
-  {
-    icon: <Glyph name="pin" size={18} />,
-    name: "Healthcare",
-    detail: "Health systems, QI and research teams",
-  },
-  {
-    icon: <Glyph name="award" size={18} />,
-    name: "Legal & criminal justice",
-    detail: "Courts, agencies and advocacy organizations",
-  },
-  {
-    icon: <Glyph name="dot" size={18} />,
-    name: "Entertainment",
-    detail: "Studios, creative teams and talent",
-  },
-];
 
 /**
  * "Who we are": story, a workshop still, the experience chart and where we
  * work. Pass `imageSrc` (a file under /public) for the still.
  */
 export function WhoWeAre({
+  content: c = homeDefaults.whoWeAre,
   imageSrc,
   imageAlt = "",
 }: {
+  content?: HomeContent["whoWeAre"];
   imageSrc?: string;
   imageAlt?: string;
 }) {
+  imageSrc = imageSrc ?? c.image ?? undefined;
+  const bars = ["bg-navy-100", "bg-blue-200", "bg-lilac-200"];
+  const experience = c.experience.map((row, i) => ({
+    ...row,
+    bar: bars[i % bars.length],
+  }));
+  const stats = c.stats.map((s) => [s.figure, s.label] as const);
+  const sectors = c.sectors.map((sector) => ({
+    ...sector,
+    icon: <Mark name={sector.icon} size={18} />,
+  }));
   return (
     <section className="relative overflow-hidden bg-white text-blue-900">
       <BloomGrid
@@ -87,21 +46,16 @@ export function WhoWeAre({
           <div>
             <p className="mb-5 flex items-center gap-3 text-sm">
               <span className="size-1.5 rounded-full bg-blue-900" />
-              Who we are
+              {c.eyebrow}
             </p>
             <h2 className="type-h2">
-              Since 2008, turning good intentions into measurable,{" "}
-              <span className="text-blue-500">lasting change.</span>
+              {c.title} <span className="text-blue-500">{c.titleAccent}</span>
             </h2>
             <p className="type-body mt-8 max-w-[36rem] text-blue-900/80">
-              Founded in 2008 as a small consulting agency working in
-              educational settings, Jernigan &amp; Associates grew with demand
-              from secondary schools and higher education into a women-owned,
-              national practice led by a licensed psychologist and
-              clinician-scientist.
+              {c.body}
             </p>
             <div className="mt-9">
-              <BlockButton href="/about">Our story</BlockButton>
+              <BlockButton href={c.ctaHref}>{c.ctaLabel}</BlockButton>
             </div>
           </div>
 
@@ -120,7 +74,7 @@ export function WhoWeAre({
                 <Glyph name="play" size={18} className="ml-0.5" />
               </span>
               <span className={`text-sm ${imageSrc ? "text-white" : ""}`}>
-                Watch · Inside a Jernigan workshop
+                {c.watchLabel}
               </span>
             </span>
           </Link>
@@ -130,7 +84,7 @@ export function WhoWeAre({
         <div className="mt-20 grid gap-x-28 gap-y-16 lg:mt-24 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]">
           <div>
             <h3 className="type-eyebrow font-normal text-blue-900/70">
-              Experience behind every engagement
+              {c.experienceLabel}
             </h3>
 
             <dl className="mt-9 space-y-7">
@@ -178,7 +132,7 @@ export function WhoWeAre({
 
           <div>
             <h3 className="type-eyebrow font-normal text-blue-900/70">
-              Where we work
+              {c.sectorsLabel}
             </h3>
             <ul className="mt-4">
               {sectors.map((sector) => (

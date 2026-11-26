@@ -35,6 +35,11 @@ const paths = {
 
 export type GlyphName = keyof typeof paths;
 
+/** Every glyph name, e.g. for the Studio's icon pick-list. */
+export const glyphNames = Object.keys(paths) as GlyphName[];
+
+export const isGlyph = (name: string): name is GlyphName => name in paths;
+
 export function Glyph({
   name,
   size = 16,

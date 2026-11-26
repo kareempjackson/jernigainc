@@ -3,26 +3,6 @@
 import { type FormEvent, useState } from "react";
 import { Glyph } from "@/components/icons";
 
-const INBOX = "admin@mmjerniganassociates.com";
-
-const sectors = [
-  "Education",
-  "Behavioral health",
-  "Healthcare",
-  "Legal & criminal justice",
-  "Entertainment",
-  "Other",
-];
-
-const services = [
-  "Education",
-  "Mental Health",
-  "Healthcare",
-  "Research and Evaluation",
-  "Leadership Development",
-  "Curriculum and Training",
-];
-
 const field =
   "h-9 w-full border border-blue-900/15 bg-white px-3 text-[13px] text-blue-900 placeholder:text-blue-900/40 focus:border-blue-700 focus:outline-none";
 
@@ -61,8 +41,18 @@ function Field({
  * visitor's email app with the inquiry written out, addressed to the practice.
  * Swap `handleSubmit` for a server action or API call when one exists.
  */
-export function InquiryForm() {
-  const [interests, setInterests] = useState<string[]>(["Education"]);
+export function InquiryForm({
+  inbox: INBOX,
+  sectors,
+  services,
+}: {
+  /** Where inquiries are addressed. */
+  inbox: string;
+  sectors: string[];
+  /** Practice areas offered as interests. */
+  services: string[];
+}) {
+  const [interests, setInterests] = useState<string[]>(services.slice(0, 1));
   const [sent, setSent] = useState(false);
 
   const toggle = (service: string) =>

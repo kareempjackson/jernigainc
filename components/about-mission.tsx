@@ -1,25 +1,16 @@
-const stats = [
-  ["Since 2008", "Woman-owned (WOSB-certified) boutique firm"],
-  ["100+", "Organizations served"],
-  ["35,000+", "Professionals trained"],
-  ["22+ years", "Of founder leadership"],
-] as const;
-
-const statements = [
-  [
-    "Mission",
-    "Jernigan & Associates partners with organizations across healthcare, education, justice, and the public and private sectors to translate psychological science into lasting, equity-centered change that dismantles structural barriers and builds cultures where every person is seen, valued, and able to thrive.",
-    "bg-lilac-200",
-  ],
-  [
-    "Vision",
-    "A world where equity is non-negotiable, belonging is practiced, and organizational ecosystems cultivate the full humanity, creativity, and well-being of every individual.",
-    "bg-mist-200",
-  ],
-] as const;
+import { aboutDefaults, type AboutContent } from "@/content/about";
 
 /** About page: headline figures, then mission and vision. */
-export function AboutMission() {
+export function AboutMission({
+  content: c = aboutDefaults.mission,
+}: {
+  content?: AboutContent["mission"];
+}) {
+  const tones = ["bg-lilac-200", "bg-mist-200"];
+  const stats = c.stats.map((s) => [s.figure, s.label] as const);
+  const statements = c.statements.map(
+    (s, i) => [s.label, s.text, tones[i % tones.length]] as const,
+  );
   return (
     <section className="bg-blue-700 text-white">
       <div className="mx-auto max-w-[1440px] px-6 md:px-16 py-14 lg:py-20">

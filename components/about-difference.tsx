@@ -1,35 +1,21 @@
-import { BlockButton, BloomGrid, Photo } from "@/components/brand";
-import { Glyph, type GlyphName } from "@/components/icons";
-
-const points: [GlyphName, string, string][] = [
-  [
-    "focus",
-    "Interdisciplinary expertise",
-    "Deep expertise across psychology, education, and organizational development.",
-  ],
-  [
-    "blocks",
-    "Evidence-based, not improvised",
-    "Backed by the Intersections Research Lab, so every strategy is grounded in science.",
-  ],
-  [
-    "chat",
-    "Partnership over prescription",
-    "We co-design with the people closest to the work, so the change holds.",
-  ],
-];
+import { aboutDefaults, type AboutContent } from "@/content/about";
+import { BlockButton, BloomGrid, Mark, Photo } from "@/components/brand";
 
 /**
  * About page: "What sets us apart", a full-bleed photo beside a tan panel.
  * Pass `imageSrc` (a file under /public).
  */
 export function AboutDifference({
+  content: c = aboutDefaults.difference,
   imageSrc,
   imageAlt = "",
 }: {
+  content?: AboutContent["difference"];
   imageSrc?: string;
   imageAlt?: string;
 }) {
+  imageSrc = imageSrc ?? c.image ?? undefined;
+  const points = c.points.map((p) => [p.icon, p.title, p.body] as const);
   return (
     <section className="grid bg-tan-300 text-blue-900 lg:grid-cols-[minmax(0,0.74fr)_minmax(0,1fr)]">
       <div className="relative min-h-[320px] bg-paper-200 lg:min-h-0">
@@ -51,11 +37,10 @@ export function AboutDifference({
         />
         <div className="relative px-6 py-14 md:px-16 lg:py-20">
           <h2 className="font-serif text-[clamp(1.875rem,3.1vw,2.5rem)] leading-[1.05] tracking-[-0.015em]">
-            What sets us apart
+            {c.title}
           </h2>
           <p className="mt-6 max-w-[32rem] text-[15px] leading-[1.6] text-blue-900/75">
-            Clients come to us when they realize that real equity takes more
-            than a training session or a policy statement.
+            {c.body}
           </p>
 
           <ul className="mt-8 max-w-[33rem] space-y-6">
@@ -64,7 +49,7 @@ export function AboutDifference({
                 key={title}
                 className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4"
               >
-                <Glyph name={icon} size={20} className="mt-0.5" />
+                <Mark name={icon} size={20} className="mt-0.5" />
                 <div>
                   <h3 className="font-semibold">{title}</h3>
                   <p className="mt-1.5 text-sm leading-[1.55] text-blue-900/75">
@@ -76,7 +61,7 @@ export function AboutDifference({
           </ul>
 
           <div className="mt-9">
-            <BlockButton href="/contact">Book a consultation</BlockButton>
+            <BlockButton href={c.ctaHref}>{c.ctaLabel}</BlockButton>
           </div>
         </div>
       </div>

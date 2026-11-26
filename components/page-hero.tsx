@@ -1,3 +1,4 @@
+import type { HeroContent } from "@/content/shared";
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment } from "react";
@@ -148,4 +149,20 @@ export function PageHero({
       </div>
     </section>
   );
+}
+
+/** Turn a hero from the CMS into `PageHero` props. */
+export function heroProps(h: HeroContent) {
+  return {
+    eyebrow: h.eyebrow,
+    title: h.title,
+    body: h.body,
+    primary: { label: h.primaryLabel, href: h.primaryHref },
+    secondary: { label: h.secondaryLabel, href: h.secondaryHref },
+    topChip: { icon: "pin" as const, figure: h.chipFigure, label: h.chipLabel },
+    bottomChip: h.bottomChipFigure
+      ? { figure: h.bottomChipFigure, label: h.bottomChipLabel }
+      : undefined,
+    imageSrc: h.image ?? undefined,
+  };
 }

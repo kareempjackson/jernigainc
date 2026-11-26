@@ -1,20 +1,12 @@
-const steps = [
-  [
-    "Understand",
-    "We listen first: your context, your people and your systems.",
-  ],
-  [
-    "Co-design",
-    "We build solutions with you, never just for you, grounded in evidence.",
-  ],
-  [
-    "Measure impact",
-    "We distinguish individual, organizational and systems-level impact, so you can see the change, not just feel it.",
-  ],
-] as const;
+import { aboutDefaults, type AboutContent } from "@/content/about";
 
 /** About page: "Our approach" (the page's `#approach` target). */
-export function AboutApproach() {
+export function AboutApproach({
+  content: c = aboutDefaults.approach,
+}: {
+  content?: AboutContent["approach"];
+}) {
+  const steps = c.steps.map((s) => [s.title, s.body] as const);
   return (
     <section id="approach" className="scroll-mt-6 bg-paper-100 text-blue-900">
       <div className="mx-auto max-w-[1440px] px-6 md:px-16 grid gap-x-20 gap-y-10 py-14 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:py-20">
@@ -24,16 +16,17 @@ export function AboutApproach() {
               aria-hidden="true"
               className="size-1 rounded-full bg-current"
             />
-            Our approach
+            {c.eyebrow}
           </p>
           <h2 className="font-serif text-[clamp(1.875rem,3.1vw,2.5rem)] leading-[1.05] tracking-[-0.015em] mt-4">
-            <span className="block">Measure what matters.</span>
-            <span className="block">See the change.</span>
+            {c.title.map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))}
           </h2>
           <p className="mt-6 max-w-[31rem] text-[15px] leading-[1.65] text-blue-900/75">
-            We start by understanding your context, then co-design solutions
-            that are grounded in evidence and tailored to your goals. Every
-            engagement is customized, and we measure what matters.
+            {c.body}
           </p>
         </div>
 

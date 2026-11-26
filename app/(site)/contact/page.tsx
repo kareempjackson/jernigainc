@@ -1,67 +1,28 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Glyph, type GlyphName } from "@/components/icons";
+import { Mark } from "@/components/brand";
+import { Glyph } from "@/components/icons";
+import { getContact, getServices } from "@/sanity/lib/content";
 import { InquiryForm } from "@/components/inquiry-form";
 
-export const metadata: Metadata = {
-  title: "Contact · Jernigan & Associates",
-  description:
-    "Book a consultation. Tell us what your organization is working toward.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return (await getContact()).seo;
+}
 
-const details: {
-  icon: GlyphName;
-  label: string;
-  value: string;
-  href?: string;
-}[] = [
-  {
-    icon: "pin",
-    label: "Location",
-    value: "Atlanta, GA. Virtual-first, serving clients nationally.",
-  },
-  {
-    icon: "phone",
-    label: "Phone",
-    value: "404-410-6674",
-    href: "tel:+14044106674",
-  },
-  {
-    icon: "mail",
-    label: "Email",
-    value: "admin@mmjerniganassociates.com",
-    href: "mailto:admin@mmjerniganassociates.com",
-  },
-  {
-    icon: "globe",
-    label: "Website",
-    value: "mmjerniganassociates.com",
-    href: "https://mmjerniganassociates.com",
-  },
-];
+export default async function ContactPage() {
+  const [c, services] = await Promise.all([getContact(), getServices()]);
+  const details = c.details;
+  const tones = ["bg-tan-300", "bg-mist-200", "bg-lilac-200"];
+  const next = c.next.steps.map(
+    (step, i) =>
+      [
+        String(i + 1).padStart(2, "0"),
+        step.title,
+        step.body,
+        tones[i % tones.length],
+      ] as const,
+  );
 
-const next = [
-  [
-    "01",
-    "We listen",
-    "A conversation about your context, your people and what you are working toward.",
-    "bg-tan-300",
-  ],
-  [
-    "02",
-    "We co-design",
-    "A proposal shaped with you, grounded in evidence and scoped to your goals.",
-    "bg-mist-200",
-  ],
-  [
-    "03",
-    "We measure",
-    "Clear reporting that shows what changed, for whom, and what to do next.",
-    "bg-lilac-200",
-  ],
-] as const;
-
-export default function ContactPage() {
   return (
     <>
       <section className="relative overflow-hidden bg-blue-700 text-white">
@@ -83,10 +44,10 @@ export default function ContactPage() {
 
             <p className="mt-6 flex items-center gap-2.5 text-[13px] text-white/85">
               <Glyph name="chat" size={14} className="text-lilac-300" />
-              Book a consultation
+              {c.eyebrow}
             </p>
             <h1 className="mt-4 max-w-[27rem] font-serif text-[clamp(2rem,min(3.3vw,5.6svh),3rem)] leading-[1.02] tracking-[-0.02em]">
-              Let’s talk about what your organization is working toward.
+              {c.title}
             </h1>
 
             <dl className="mt-8 max-w-[30rem] border-b border-white/20">
@@ -95,7 +56,7 @@ export default function ContactPage() {
                   key={item.label}
                   className="flex gap-4 border-t border-white/20 py-3.5"
                 >
-                  <Glyph
+                  <Mark
                     name={item.icon}
                     size={15}
                     className="mt-0.5 shrink-0 text-tan-200"
@@ -120,7 +81,11 @@ export default function ContactPage() {
           </div>
 
           <div className="lg:pt-0">
-            <InquiryForm />
+            <InquiryForm
+              inbox={c.form.inbox}
+              sectors={c.form.sectors}
+              services={services.map((s) => s.name)}
+            />
           </div>
         </div>
       </section>
@@ -129,11 +94,14 @@ export default function ContactPage() {
         <div className="mx-auto max-w-[1440px] px-6 py-14 md:px-16 lg:py-20">
           <p className="mb-3.5 flex items-center gap-2.5 text-[13px] text-blue-900/85">
             <span className="size-1 rounded-full bg-blue-900" />
-            What happens next
+            {c.next.eyebrow}
           </p>
           <h2 className="font-serif text-[clamp(1.75rem,3vw,2.5rem)] leading-[1.05] tracking-[-0.015em]">
-            <span className="block">From first call</span>
-            <span className="block">to a plan that fits</span>
+            {c.next.title.map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))}
           </h2>
 
           <ol className="mt-9 grid gap-3 md:grid-cols-3">

@@ -1,10 +1,11 @@
 "use client";
 
+import type { HomeContent } from "@/content/home";
 import { useState } from "react";
 import { GuideFrame, Photo, Tag } from "@/components/brand";
 import { Glyph } from "@/components/icons";
 
-export type ImpactSlide = {
+type ImpactSlide = {
   figure: string;
   caption: string;
   partner: string;
@@ -14,31 +15,15 @@ export type ImpactSlide = {
   imageAlt?: string;
 };
 
-export const defaultSlides: ImpactSlide[] = [
-  {
-    figure: "35,000+",
-    caption:
-      "Professionals trained since 2008, across education, healthcare, behavioral health, legal and entertainment.",
-    partner: "Education partners",
-    tags: ["K–12", "Higher ed"],
-  },
-  {
-    figure: "100+",
-    caption:
-      "Organizations served since 2008, from single schools to national health systems.",
-    partner: "Healthcare partners",
-    tags: ["Health systems", "Research teams"],
-  },
-  {
-    figure: "50+ years",
-    caption: "Collective experience across our consultants.",
-    partner: "Behavioral health partners",
-    tags: ["Clinics", "Care teams"],
-  },
-];
-
 /** "Since 2008": one headline number at a time, each with a partner photo. */
-export function Impact({ slides = defaultSlides }: { slides?: ImpactSlide[] }) {
+export function Impact({ content: c }: { content: HomeContent["impact"] }) {
+  const slides: ImpactSlide[] = c.slides.map((s) => ({
+    figure: s.figure,
+    caption: s.caption,
+    partner: s.partner,
+    tags: s.tags,
+    imageSrc: s.image ?? undefined,
+  }));
   const [index, setIndex] = useState(0);
   const slide = slides[index];
 
@@ -48,9 +33,8 @@ export function Impact({ slides = defaultSlides }: { slides?: ImpactSlide[] }) {
         <div className="flex flex-col">
           <p className="flex items-center gap-2.5 text-sm">
             <Glyph name="check" size={16} className="text-lilac-300" />
-            Since 2008
+            {c.eyebrow}
           </p>
-
           <div aria-live="polite" className="mt-16 lg:mt-auto">
             <p className="font-serif text-[clamp(4.5rem,11vw,10rem)] leading-[0.9] tracking-[-0.02em]">
               {slide.figure}

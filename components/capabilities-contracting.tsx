@@ -1,36 +1,32 @@
+import {
+  capabilitiesDefaults,
+  type CapabilitiesContent,
+} from "@/content/capabilities";
 import { BlockButton } from "@/components/brand";
-
-const EMAIL = "drmaryam@mmjerniganassociates.com";
-const WEBSITE = "www.mmjerniganassociates.com";
-
-const codes = [
-  {
-    name: "NAICS",
-    primary: "541611",
-    secondary: ["611710", "621330", "541618", "541690", "611430"],
-  },
-  {
-    name: "PSC",
-    primary: "U008",
-    secondary: ["B542", "AF32", "R410", "R406", "R405", "AF22"],
-  },
-];
 
 /**
  * Capabilities page: NAICS / PSC codes and the point of contact. The section
  * is the page's `#contact` target.
  */
-export function CapabilitiesContracting() {
+export function CapabilitiesContracting({
+  content: c = capabilitiesDefaults.contracting,
+}: {
+  content?: CapabilitiesContent["contracting"];
+}) {
+  const { codes } = c;
+  const EMAIL = c.email;
+  const WEBSITE = c.website;
   return (
     <section id="contact" className="scroll-mt-6 bg-paper-200 text-blue-900">
       <div className="mx-auto max-w-[1440px] px-6 md:px-16 lg:px-20 grid gap-x-10 gap-y-12 py-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,400px)] lg:py-20">
         <div>
-          <p className="type-eyebrow text-xs text-blue-500">
-            Contracting details
-          </p>
+          <p className="type-eyebrow text-xs text-blue-500">{c.eyebrow}</p>
           <h2 className="font-serif text-[clamp(1.875rem,3.1vw,2.5rem)] leading-[1.05] tracking-[-0.015em] mt-4">
-            <span className="block">Codes, Data</span>
-            <span className="block">And Contact</span>
+            {c.title.map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))}
           </h2>
 
           <div className="mt-10 grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:mt-14">
@@ -44,9 +40,7 @@ export function CapabilitiesContracting() {
                       {primary}
                     </span>
                   </dd>
-                  <dt className="mt-5 text-xs text-blue-900/60">
-                    Secondary
-                  </dt>
+                  <dt className="mt-5 text-xs text-blue-900/60">Secondary</dt>
                   <dd className="mt-2">
                     <ul className="flex max-w-[21rem] flex-wrap gap-2">
                       {secondary.map((code) => (
@@ -69,20 +63,20 @@ export function CapabilitiesContracting() {
           aria-labelledby="contact-heading"
           className="bg-blue-900 p-7 text-white sm:p-8"
         >
-          <h3 id="contact-heading" className="type-eyebrow text-xs text-tan-200">
-            Contact
+          <h3
+            id="contact-heading"
+            className="type-eyebrow text-xs text-tan-200"
+          >
+            {c.contactTitle}
           </h3>
           <dl className="mt-6 space-y-5 text-[15px] leading-[1.45] [&_dt]:mb-2 [&_dt]:text-[10.5px] [&_dt]:font-semibold [&_dt]:uppercase [&_dt]:leading-none [&_dt]:tracking-[0.08em] [&_dt]:text-mist-300">
             <div>
               <dt>Legal name</dt>
-              <dd>
-                Jernigan and Associates Psychological and Educational
-                Consulting, Inc.
-              </dd>
+              <dd>{c.legalName}</dd>
             </div>
             <div>
               <dt>Point of contact</dt>
-              <dd>Dr. Maryam M. Jernigan-Noesi, Principal</dd>
+              <dd>{c.pointOfContact}</dd>
             </div>
             <div>
               <dt>Email</dt>
@@ -98,9 +92,11 @@ export function CapabilitiesContracting() {
             <div>
               <dt>Address</dt>
               <dd>
-                1655 Mount McKinley Drive
-                <br />
-                Grayson, GA 30017-2980
+                {c.addressLines.map((line) => (
+                  <span key={line} className="block">
+                    {line}
+                  </span>
+                ))}
               </dd>
             </div>
             <div>
@@ -118,7 +114,7 @@ export function CapabilitiesContracting() {
               variant="tan"
               icon="arrow-up-right"
             >
-              Email the POC
+              {c.ctaLabel}
             </BlockButton>
           </div>
         </aside>

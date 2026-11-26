@@ -1,21 +1,22 @@
+import { homeDefaults, type HomeContent } from "@/content/home";
 import { BlockButton, Chip, GuideFrame, Photo, Tag } from "@/components/brand";
-
-const steps = [
-  ["01", "Understand", "We listen first: your context, people and systems."],
-  ["02", "Co-design", "We build solutions with you, never just for you."],
-  ["03", "Create change", "We embed practices that outlast our engagement."],
-] as const;
 
 /**
  * "Meet the founder". Pass `imageSrc` (a file under /public) for the portrait.
  */
 export function Founder({
+  content: c = homeDefaults.founder,
   imageSrc,
-  imageAlt = "Dr. Maryam M. Jernigan-Noesi",
+  imageAlt,
 }: {
+  content?: HomeContent["founder"];
   imageSrc?: string;
   imageAlt?: string;
 }) {
+  imageSrc = imageSrc ?? c.image ?? undefined;
+  const steps = c.steps.map(
+    (s, i) => [String(i + 1).padStart(2, "0"), s.title, s.body] as const,
+  );
   return (
     <section className="bg-paper-100 text-blue-900">
       <div className="mx-auto grid max-w-[1440px] items-center gap-x-24 gap-y-14 px-6 py-20 md:px-16 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)] lg:py-24">
@@ -23,7 +24,7 @@ export function Founder({
           <div className="absolute inset-[12.5%] bg-blue-200">
             <Photo
               src={imageSrc}
-              alt={imageAlt}
+              alt={imageAlt ?? c.name}
               slot="Founder portrait, plain light backdrop"
               sizes="(min-width: 1024px) 35vw, 100vw"
             />
@@ -31,39 +32,38 @@ export function Founder({
               <Chip
                 size="lg"
                 icon="award"
-                figure="2008"
-                label="Founded Jernigan & Associates"
+                figure={c.chipFigure}
+                label={c.chipLabel}
                 className="bg-lilac-200"
               />
             </div>
             <div className="absolute bottom-0 left-0 max-w-[85%] bg-navy-100 px-5 py-5 sm:px-6">
               <p className="text-lg font-medium leading-snug sm:text-xl">
-                Dr. Maryam M. Jernigan-Noesi
+                {c.name}
               </p>
               <p className="mt-3 flex flex-wrap gap-2">
-                <Tag>PhD</Tag>
-                <Tag>Licensed Psychologist</Tag>
-                <Tag>Founder</Tag>
+                {c.tags.map((tag) => (
+                  <Tag key={tag}>{tag}</Tag>
+                ))}
               </p>
             </div>
           </div>
         </GuideFrame>
 
         <div>
-          <p className="mb-4 text-sm text-blue-900/70">Meet the founder</p>
+          <p className="mb-4 text-sm text-blue-900/70">{c.eyebrow}</p>
           <h2 className="type-h2-lg">
-            <span className="block">Dr. Maryam</span>
-            <span className="block">Jernigan-Noesi</span>
+            {c.title.map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))}
           </h2>
           <p className="type-body mt-8 max-w-[35rem] text-blue-900/80">
-            A licensed psychologist, clinician-scientist and award-winning
-            scholar with more than two decades of experience, Dr. Jernigan-Noesi
-            leads Jernigan &amp; Associates across behavioral health,
-            healthcare, education, legal and criminal justice, and
-            entertainment.
+            {c.body}
           </p>
           <div className="mt-12">
-            <BlockButton href="/our-team#founder">Read Maryam’s story</BlockButton>
+            <BlockButton href={c.ctaHref}>{c.ctaLabel}</BlockButton>
           </div>
 
           <ol className="mt-16 grid gap-x-4 gap-y-8 sm:grid-cols-3 lg:mt-24">

@@ -1,23 +1,15 @@
-const settings = [
-  "Private practice",
-  "Hospital",
-  "Outpatient",
-  "Community",
-  "Academic",
-];
-
-const concerns = [
-  "Mood and anxiety",
-  "Trauma and racism-related stress",
-  "Grief and loss",
-  "Eating and weight",
-  "Relationships and family dynamics",
-  "Career and life transitions",
-  "Women’s health",
-];
+import {
+  psychologistDefaults,
+  type PsychologistContent,
+} from "@/content/psychologist";
 
 /** Licensed psychologist page: about the practice, and concerns treated. */
-export function ClinicalPractice() {
+export function ClinicalPractice({
+  content: c = psychologistDefaults.practice,
+}: {
+  content?: PsychologistContent["practice"];
+}) {
+  const { settings, concerns } = c;
   return (
     <section className="bg-white text-blue-900">
       <div className="mx-auto max-w-[1440px] px-6 md:px-16 grid gap-x-20 gap-y-12 py-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:py-20">
@@ -27,19 +19,14 @@ export function ClinicalPractice() {
               aria-hidden="true"
               className="size-1 rounded-full bg-current"
             />
-            About the practice
+            {c.eyebrow}
           </p>
           <h2 className="font-serif text-[clamp(1.875rem,3.1vw,2.5rem)] leading-[1.05] tracking-[-0.015em] mt-4">
-            <span className="block text-navy-900">Care that fits</span>
-            <span className="block text-blue-700">your whole life.</span>
+            <span className="block text-navy-900">{c.titleDark}</span>
+            <span className="block text-blue-700">{c.titleBlue}</span>
           </h2>
           <p className="mt-6 max-w-[34rem] text-[15px] leading-[1.65] text-blue-900/75">
-            Dr. Maryam M. Jernigan-Noesi is a licensed psychologist with nearly
-            two decades of experience providing mental health care across
-            private practice, hospital, outpatient, community, and academic
-            settings. As a clinician-scientist, she has provided individual,
-            couple, and family psychotherapy to adolescents, adults, and
-            couples.
+            {c.body}
           </p>
           <ul className="mt-6 flex flex-wrap gap-2">
             {settings.map((setting) => (
@@ -55,7 +42,7 @@ export function ClinicalPractice() {
 
         <div>
           <h3 className="type-eyebrow text-[11px] text-blue-500">
-            Concerns she works with
+            {c.concernsLabel}
           </h3>
           <ol className="mt-4 border-t border-blue-900/15">
             {concerns.map((concern, i) => (

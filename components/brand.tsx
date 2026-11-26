@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
-import { Glyph, type GlyphName } from "@/components/icons";
+import { Glyph, type GlyphName, isGlyph } from "@/components/icons";
 
 const LOGO_SRC = "/logo/jernigan-logo-white.png";
 const LOGO_RATIO = 325 / 183;
@@ -288,6 +288,26 @@ export function BloomGrid({
     >
       {cells}
     </svg>
+  );
+}
+
+/**
+ * An icon chosen by name in the CMS: a glyph, or the brand flower for
+ * "flower" and for any name that is not a glyph.
+ */
+export function Mark({
+  name,
+  size = 16,
+  className = "",
+}: {
+  name: string;
+  size?: number;
+  className?: string;
+}) {
+  return isGlyph(name) ? (
+    <Glyph name={name} size={size} className={className} />
+  ) : (
+    <Flower size={size} className={className} />
   );
 }
 

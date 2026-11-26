@@ -1,28 +1,27 @@
+import { homeDefaults, type HomeContent } from "@/content/home";
 import Image from "next/image";
 import Link from "next/link";
 import { BlockButton, BloomGrid, Chip, Flower } from "@/components/brand";
-import { Glyph } from "@/components/icons";
-
-const timeline = [
-  ["2008", "Founded in Atlanta"],
-  ["2008–2026", "Expanded nationally"],
-  ["Today", "Virtual-first, national"],
-] as const;
+import { Glyph, isGlyph } from "@/components/icons";
 
 /**
  * Homepage hero. Pass `imageSrc` (a file under /public) once the photograph is
  * available; until then the frame shows the bloom pattern.
  */
 export function Hero({
+  content: c = homeDefaults.hero,
   imageSrc,
   imageAlt = "",
   className = "",
 }: {
+  content?: HomeContent["hero"];
   imageSrc?: string;
   imageAlt?: string;
   /** e.g. `h-full` when the parent sizes the hero to the viewport. */
   className?: string;
 }) {
+  imageSrc = imageSrc ?? c.image ?? undefined;
+  const timeline = c.timeline.map((t) => [t.when, t.what] as const);
   return (
     <section
       className={`relative overflow-hidden bg-blue-700 text-white ${className}`}
@@ -38,24 +37,24 @@ export function Hero({
         <div className="flex min-h-0 flex-col lg:h-full lg:max-h-[580px] lg:self-center">
           <p className="flex items-center gap-2.5 text-sm text-white/85">
             <Glyph name="check" size={16} className="text-lilac-300" />
-            Psychological &amp; educational consulting since 2008
+            {c.eyebrow}
           </p>
           <h1 className="mt-4 font-serif text-[clamp(2.5rem,min(5.6vw,9.5svh),5.25rem)] leading-[0.98] tracking-[-0.02em]">
-            <span className="block">Welcome to</span>
-            <span className="block">a new era of</span>
-            <span className="block">belonging</span>
+            {c.title.map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))}
           </h1>
           <p className="mt-6 max-w-[30rem] text-base leading-[1.55] text-white/80">
-            Discover research-led psychological and educational consulting that
-            meets people where they are. We help institutions become places
-            where everyone can grow.
+            {c.body}
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-5 lg:mt-auto lg:pt-6">
-            <BlockButton href="/work" variant="light">
-              Explore our work
+            <BlockButton href={c.primaryHref} variant="light">
+              {c.primaryLabel}
             </BlockButton>
             <Link
-              href="#film"
+              href={c.secondaryHref}
               className="group type-button flex items-center gap-3"
             >
               <span className="flex size-12 items-center justify-center rounded-full bg-lilac-300 text-blue-900 transition-colors group-hover:bg-white">
@@ -68,7 +67,7 @@ export function Hero({
                   <path d="M0 0l12 7-12 7z" fill="currentColor" />
                 </svg>
               </span>
-              Watch the film
+              {c.secondaryLabel}
             </Link>
           </div>
         </div>
@@ -107,28 +106,27 @@ export function Hero({
 
           {/* Data chips overlap the frame edge */}
           <div className="absolute left-3 top-4 flex flex-col items-start gap-2.5 sm:-left-10 sm:top-6">
-            <Chip
-              size="lg"
-              icon="pin"
-              figure="2008"
-              label="Founded in Atlanta as a small consulting agency"
-              className="bg-navy-100"
-            />
-            <Chip
-              size="lg"
-              icon="bars"
-              figure="100+"
-              label="Organizations served"
-              className="bg-lilac-200"
-            />
+            {c.chips.slice(0, 2).map((chip, i) => (
+              <Chip
+                key={chip.label}
+                size="lg"
+                icon={isGlyph(chip.icon) ? chip.icon : undefined}
+                figure={chip.figure}
+                label={chip.label}
+                className={i === 0 ? "bg-navy-100" : "bg-lilac-200"}
+              />
+            ))}
           </div>
           <div className="absolute right-3 top-[46%] hidden sm:-right-4 sm:block">
-            <Chip
-              size="lg"
-              figure="35,000+"
-              label="Professionals trained"
-              className="bg-white"
-            />
+            {c.chips[2] && (
+              <Chip
+                size="lg"
+                icon={isGlyph(c.chips[2].icon) ? c.chips[2].icon : undefined}
+                figure={c.chips[2].figure}
+                label={c.chips[2].label}
+                className="bg-white"
+              />
+            )}
           </div>
         </div>
       </div>

@@ -1,17 +1,22 @@
+import {
+  psychologistDefaults,
+  type PsychologistContent,
+} from "@/content/psychologist";
 import { Flower } from "@/components/brand";
-
-const approaches = [
-  ["Relational-cultural", "bg-tan-300"],
-  ["Family-systems", "bg-mist-200"],
-  ["Psychodynamic", "bg-lilac-200"],
-  ["Cognitive-behavioral", "bg-paper-100"],
-] as const;
 
 /**
  * Licensed psychologist page: "How therapy works" (the page's
  * `#how-therapy-works` target).
  */
-export function ClinicalApproaches() {
+export function ClinicalApproaches({
+  content: c = psychologistDefaults.approaches,
+}: {
+  content?: PsychologistContent["approaches"];
+}) {
+  const tones = ["bg-tan-300", "bg-mist-200", "bg-lilac-200", "bg-paper-100"];
+  const approaches = c.items.map(
+    (name, i) => [name, tones[i % tones.length]] as const,
+  );
   return (
     <section
       id="how-therapy-works"
@@ -32,17 +37,17 @@ export function ClinicalApproaches() {
                 aria-hidden="true"
                 className="size-1 rounded-full bg-current"
               />
-              How therapy works
+              {c.eyebrow}
             </p>
             <h2 className="font-serif text-[clamp(1.875rem,3.1vw,2.5rem)] leading-[1.05] tracking-[-0.015em] mt-4">
-              <span className="block">Goals set together,</span>
-              <span className="block">at your pace</span>
+              {c.title.map((line) => (
+                <span key={line} className="block">
+                  {line}
+                </span>
+              ))}
             </h2>
           </div>
-          <p className="text-[15px] leading-[1.6] text-white/75">
-            Dr. Jernigan-Noesi works collaboratively with each client to set
-            goals that fit their life, drawing on four complementary approaches.
-          </p>
+          <p className="text-[15px] leading-[1.6] text-white/75">{c.body}</p>
         </div>
 
         <ol className="mt-10 grid gap-0.5 sm:grid-cols-2 lg:grid-cols-4">

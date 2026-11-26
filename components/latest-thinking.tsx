@@ -2,59 +2,32 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Photo } from "@/components/brand";
-import { Glyph, type GlyphName } from "@/components/icons";
+import { Mark, Photo } from "@/components/brand";
+import {
+  articleDefaults,
+  insightsDefaults,
+  type ArticleContent,
+  type InsightsContent,
+} from "@/content/insights";
 
-export type Article = {
-  title: string;
-  summary: string;
-  topic: string;
-  date: string;
-  href: string;
-  /** Format marker beside "Read more": article, audio or video. */
-  icon: GlyphName;
-  /** A file under /public. */
-  imageSrc?: string;
+/** Marker beside "Read more", by format. */
+const FORMAT_ICON: Record<string, string> = {
+  article: "blocks",
+  audio: "mic",
+  video: "play",
 };
-
-/** Placeholder entries: replace with the real articles. */
-export const defaultArticles: Article[] = [
-  "Racial Trauma",
-  "Mental Health",
-  "Education",
-  "Child Development",
-].map((topic, i) => ({
-  title: "Article title, up to two lines",
-  summary:
-    "One to two sentence summary of the piece, written for busy leaders.",
-  topic,
-  date: "Date",
-  href: "/insights",
-  icon: (["blocks", "mic", "play", "blocks"] as const)[i],
-}));
-
-const TOPICS = [
-  "Racial Trauma",
-  "Child Development",
-  "Mental Health",
-  "Education",
-];
-
-const FEATURED_IN = [
-  "NPR",
-  "WNYC",
-  "The 19th",
-  "The Wall Street Journal",
-  "HuffPost",
-];
 
 /** "Latest thinking": articles with a topic filter, and press mentions. */
 export function LatestThinking({
-  articles = defaultArticles,
+  articles = articleDefaults,
+  content: c = insightsDefaults.latest,
 }: {
-  articles?: Article[];
+  articles?: ArticleContent[];
+  content?: InsightsContent["latest"];
 }) {
   const [topic, setTopic] = useState("All");
+  // The filter offers whichever topics the articles actually use.
+  const topics = [...new Set(articles.map((a) => a.topic).filter(Boolean))];
   const shown =
     topic === "All" ? articles : articles.filter((a) => a.topic === topic);
 
@@ -63,14 +36,14 @@ export function LatestThinking({
       <div className="mx-auto max-w-[1440px] px-6 md:px-16 py-14 lg:py-20">
         <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-6">
           <h2 className="font-serif text-[clamp(1.875rem,3.1vw,2.5rem)] leading-[1.05] tracking-[-0.015em] text-navy-900">
-            Latest thinking
+            {c.title}
           </h2>
           <div
             role="group"
             aria-label="Filter by topic"
             className="flex flex-wrap gap-2"
           >
-            {["All", ...TOPICS].map((name) => (
+            {["All", ...topics].map((name) => (
               <button
                 key={name}
                 type="button"
@@ -90,14 +63,14 @@ export function LatestThinking({
 
         <ul className="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {shown.map((article, i) => (
-            <li key={`${article.topic}-${i}`}>
+            <li key={`${article.title}-${i}`}>
               <Link
-                href={article.href}
+                href={article.href || "#"}
                 className="group flex h-full flex-col bg-white"
               >
                 <span className="relative block aspect-[3/2] bg-paper-300">
                   <Photo
-                    src={article.imageSrc}
+                    src={article.image ?? undefined}
                     alt=""
                     slot={article.topic}
                     sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
@@ -117,7 +90,10 @@ export function LatestThinking({
                     {article.summary}
                   </span>
                   <span className="mt-auto flex items-center gap-2.5 pt-5 text-[13px] font-medium group-hover:underline">
-                    <Glyph name={article.icon} size={15} />
+                    <Mark
+                      name={FORMAT_ICON[article.format] ?? "blocks"}
+                      size={15}
+                    />
                     Read more
                   </span>
                 </span>
@@ -125,18 +101,13 @@ export function LatestThinking({
             </li>
           ))}
         </ul>
-        {shown.length === 0 && (
-          <p className="mt-9 text-sm text-blue-900/70">
-            Nothing published under this topic yet.
-          </p>
-        )}
 
         <div className="mt-10 flex flex-wrap items-baseline gap-x-12 gap-y-4 border-t border-blue-900/15 pt-8">
           <h3 className="type-eyebrow text-[11px] text-blue-900/70">
-            As featured in
+            {c.featuredInLabel}
           </h3>
           <ul className="flex flex-wrap items-baseline gap-x-12 gap-y-3 font-serif text-[1.5rem] leading-none tracking-[-0.01em]">
-            {FEATURED_IN.map((outlet) => (
+            {c.featuredIn.map((outlet) => (
               <li key={outlet}>{outlet}</li>
             ))}
           </ul>

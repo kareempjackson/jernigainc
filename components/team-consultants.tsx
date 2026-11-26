@@ -1,6 +1,7 @@
+import { teamDefaults, type TeamContent } from "@/content/team";
 import Image from "next/image";
 
-export type Consultant = {
+type Consultant = {
   name: string;
   role: string;
   bio: string;
@@ -10,33 +11,6 @@ export type Consultant = {
   imageSrc?: string;
 };
 
-export const defaultConsultants: Consultant[] = [
-  {
-    name: "Dr. Carlton E. Green",
-    role: "Senior Consultant",
-    bio: "Focuses on diversity, social justice, and psychological health, and consults on racial trauma and equity strategy for educational and corporate clients.",
-    tone: "bg-tan-300",
-  },
-  {
-    name: "Dr. Shelby Ortega",
-    role: "Senior Consultant",
-    bio: "Specializes in multicultural mental health, identity development, and emotional skillfulness, leading training and workshops across projects.",
-    tone: "bg-lilac-200",
-  },
-  {
-    name: "Dr. Kevin Henze",
-    role: "Consultant",
-    bio: "Specializes in psychiatric rehabilitation and culturally responsive clinical practice, supporting healthcare-system and clinical-intervention projects.",
-    tone: "bg-mist-200",
-  },
-  {
-    name: "Dr. Leyla Perez-Gualdron",
-    role: "Consultant",
-    bio: "Expertise in clinical psychology and research with a focus on community engagement and anti-racism, leading research consultation and program development.",
-    tone: "bg-paper-200",
-  },
-];
-
 /** "CG" from "Dr. Carlton E. Green": first and last name, title dropped. */
 function initials(name: string) {
   const parts = name.replace(/^Dr\.\s+/, "").split(/\s+/);
@@ -45,10 +19,18 @@ function initials(name: string) {
 
 /** Our team page: senior consultants and consultants. */
 export function TeamConsultants({
-  consultants = defaultConsultants,
+  content: c = teamDefaults.consultants,
 }: {
-  consultants?: Consultant[];
+  content?: TeamContent["consultants"];
 }) {
+  const tones = ["bg-tan-300", "bg-lilac-200", "bg-mist-200", "bg-paper-200"];
+  const consultants: Consultant[] = c.people.map((p, i) => ({
+    name: p.name,
+    role: p.role,
+    bio: p.bio,
+    tone: tones[i % tones.length],
+    imageSrc: p.image ?? undefined,
+  }));
   return (
     <section className="bg-white text-blue-900">
       <div className="mx-auto max-w-[1440px] px-6 md:px-16 py-14 lg:py-20">
@@ -59,17 +41,17 @@ export function TeamConsultants({
                 aria-hidden="true"
                 className="size-1 rounded-full bg-current"
               />
-              Consulting team
+              {c.eyebrow}
             </p>
             <h2 className="font-serif text-[clamp(1.875rem,3.1vw,2.5rem)] leading-[1.05] tracking-[-0.015em] mt-4">
-              <span className="block">Senior consultants</span>
-              <span className="block">and consultants</span>
+              {c.title.map((line) => (
+                <span key={line} className="block">
+                  {line}
+                </span>
+              ))}
             </h2>
           </div>
-          <p className="text-[15px] leading-[1.6] text-blue-900/70">
-            Multidisciplinary experts matched by scope to each engagement,
-            across psychology, education and organizational development.
-          </p>
+          <p className="text-[15px] leading-[1.6] text-blue-900/70">{c.body}</p>
         </div>
 
         <ul className="mt-10 grid gap-x-5 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">

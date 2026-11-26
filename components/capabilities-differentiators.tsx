@@ -1,52 +1,38 @@
+import {
+  capabilitiesDefaults,
+  type CapabilitiesContent,
+} from "@/content/capabilities";
 import Image from "next/image";
-
-const differentiators = [
-  [
-    "Federal past performance",
-    "Two Bureau of Prisons delivery orders totaling $616,000 under a competitively awarded small business set-aside.",
-    "bg-tan-300",
-  ],
-  [
-    "Doctoral-level team",
-    "Licensed psychologist and former tenure-track faculty member supported by doctoral-level associates and subject matter experts.",
-    "bg-lilac-200",
-  ],
-  [
-    "Research-based expertise",
-    "Peer-reviewed scholarship addressing trauma, identity development, population health, and organizational culture.",
-    "bg-mist-200",
-  ],
-  [
-    "Integrated practice",
-    "Health service provider and clinical research scientist combined with organizational consulting.",
-    "bg-paper-200",
-  ],
-  [
-    "Graduate program development",
-    "Principal assisted in developing three inaugural Clinical Mental Health programs.",
-    "bg-tan-300",
-  ],
-] as const;
 
 /**
  * Capabilities page: "Why agencies choose Jernigan". Pass `imageSrc` (a
  * cut-out portrait under /public); until then the frame shows a labelled slot.
  */
 export function CapabilitiesDifferentiators({
+  content: c = capabilitiesDefaults.differentiators,
   imageSrc,
-  imageAlt = "Dr. Maryam M. Jernigan-Noesi",
+  imageAlt,
 }: {
+  content?: CapabilitiesContent["differentiators"];
   imageSrc?: string;
   imageAlt?: string;
 }) {
+  imageSrc = imageSrc ?? c.image ?? undefined;
+  const tones = ["bg-tan-300", "bg-lilac-200", "bg-mist-200", "bg-paper-200"];
+  const differentiators = c.items.map(
+    (d, i) => [d.title, d.body, tones[i % tones.length]] as const,
+  );
   return (
     <section className="bg-white text-blue-900">
       <div className="mx-auto max-w-[1440px] px-6 md:px-16 lg:px-20 grid gap-x-20 gap-y-12 py-14 lg:grid-cols-[minmax(0,5fr)_minmax(0,8fr)] lg:py-20 xl:gap-x-36">
         <div>
-          <p className="type-eyebrow text-xs text-blue-500">Differentiators</p>
+          <p className="type-eyebrow text-xs text-blue-500">{c.eyebrow}</p>
           <h2 className="font-serif text-[clamp(1.875rem,3.1vw,2.5rem)] leading-[1.05] tracking-[-0.015em] mt-4">
-            <span className="block">Why Agencies</span>
-            <span className="block">Choose Jernigan</span>
+            {c.title.map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))}
           </h2>
 
           <figure className="mt-8 max-w-[340px]">
@@ -56,7 +42,7 @@ export function CapabilitiesDifferentiators({
               {imageSrc ? (
                 <Image
                   src={imageSrc}
-                  alt={imageAlt}
+                  alt={imageAlt ?? c.name}
                   fill
                   sizes="(min-width: 1024px) 340px, 100vw"
                   className="object-contain object-bottom"
@@ -68,11 +54,8 @@ export function CapabilitiesDifferentiators({
               )}
             </div>
             <figcaption className="bg-lilac-200 px-5 py-4">
-              <p className="text-[15px] font-semibold">Dr. Maryam M. Jernigan-Noesi</p>
-              <p className="mt-1 text-[13px] text-blue-900/70">
-                Principal <span aria-hidden="true">&nbsp;·&nbsp;</span> Point of
-                contact
-              </p>
+              <p className="text-[15px] font-semibold">{c.name}</p>
+              <p className="mt-1 text-[13px] text-blue-900/70">{c.role}</p>
             </figcaption>
           </figure>
         </div>

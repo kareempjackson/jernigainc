@@ -1,31 +1,25 @@
+import { homeDefaults, type HomeContent } from "@/content/home";
 import Image from "next/image";
-import type { ReactNode } from "react";
-import { BlockButton, Flower, GuideFrame } from "@/components/brand";
-import { Glyph } from "@/components/icons";
 
-const reasons: { icon: ReactNode; title: string; body: string }[] = [
-  {
-    icon: <Flower size={16} />,
-    title: "Access to experienced facilitators",
-    body: "Workshops and coaching that build skills leaders and staff can use the next day.",
-  },
-  {
-    icon: <Glyph name="cross" size={16} />,
-    title: "Focused on your people",
-    body: "We listen first, then build solutions with you, never just for you.",
-  },
-  {
-    icon: <Glyph name="award" size={16} />,
-    title: "Ongoing support after the work",
-    body: "We embed practices that outlast our engagement, with clear reporting on what changed and what to do next.",
-  },
-];
+import { BlockButton, Flower, GuideFrame, Mark } from "@/components/brand";
+import { Glyph } from "@/components/icons";
 
 /**
  * "Psychological science, put into practice". Pass `avatarSrc` (a file under
  * /public) for the founder's portrait in the middle pill.
  */
-export function SciencePractice({ avatarSrc }: { avatarSrc?: string }) {
+export function SciencePractice({
+  content: c = homeDefaults.science,
+  avatarSrc,
+}: {
+  content?: HomeContent["science"];
+  avatarSrc?: string;
+}) {
+  avatarSrc = avatarSrc ?? c.avatar ?? undefined;
+  const reasons = c.reasons.map((reason) => ({
+    ...reason,
+    icon: <Mark name={reason.icon} size={16} />,
+  }));
   return (
     <section className="relative overflow-hidden bg-mist-100 text-blue-900">
       <Flower
@@ -42,9 +36,11 @@ export function SciencePractice({ avatarSrc }: { avatarSrc?: string }) {
           <div className="relative w-full max-w-[400px] rounded-full bg-blue-900 p-4">
             <div className="flex items-center gap-4 rounded-full bg-white px-6 py-4">
               <Flower size={20} className="shrink-0" />
-              <span className="font-serif text-4xl leading-none">100+</span>
+              <span className="font-serif text-4xl leading-none">
+                {c.statFigure}
+              </span>
               <span className="ml-2 max-w-[9ch] text-xs leading-tight">
-                Organizations served
+                {c.statLabel}
               </span>
             </div>
           </div>
@@ -65,30 +61,29 @@ export function SciencePractice({ avatarSrc }: { avatarSrc?: string }) {
             </span>
             <div>
               <p className="text-xl font-medium leading-tight">
-                Dr. Maryam J-N.
+                {c.personName}
               </p>
-              <p className="mt-1 text-xs text-blue-900/75">
-                PhD · Licensed Psychologist
-              </p>
+              <p className="mt-1 text-xs text-blue-900/75">{c.personRole}</p>
             </div>
           </div>
 
           <p className="relative flex w-full max-w-[400px] items-center justify-center gap-3 rounded-full bg-blue-900/8 px-6 py-3 text-sm">
             <Glyph name="focus" size={15} className="shrink-0" />
-            The 4 R’s framework, in practice
+            {c.frameworkLabel}
           </p>
         </GuideFrame>
 
         <div className="flex flex-col lg:py-6">
           <h2 className="type-h2">
-            <span className="block">Psychological science,</span>
-            <span className="block">put into practice</span>
+            {c.title.map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))}
           </h2>
-          <p className="mt-6 text-blue-900/75">
-            Science-backed, culturally responsive, and built with your people.
-          </p>
+          <p className="mt-6 text-blue-900/75">{c.body}</p>
           <div className="mt-8">
-            <BlockButton href="/contact">Book a consultation</BlockButton>
+            <BlockButton href={c.ctaHref}>{c.ctaLabel}</BlockButton>
           </div>
 
           <div className="mt-14 space-y-3 lg:mt-auto lg:pt-14">

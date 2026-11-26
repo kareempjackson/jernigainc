@@ -1,43 +1,29 @@
 "use client";
 
+import type { HomeContent } from "@/content/home";
 import Image from "next/image";
 import { useRef } from "react";
 import { Flower } from "@/components/brand";
 import { Glyph } from "@/components/icons";
 
-export type Testimonial = {
+type Testimonial = {
   quote: string;
   source: string;
   /** A file under /public. */
   avatarSrc?: string;
 };
 
-export const defaultTestimonials: Testimonial[] = [
-  {
-    quote:
-      "The most practical equity work our staff has done. People still quote it.",
-    source: "Principal, K–12 partner district",
-  },
-  {
-    quote: "They brought data and humanity into the same room.",
-    source: "Nursing leader, health system partner",
-  },
-  {
-    quote: "Our students noticed the change before we told them.",
-    source: "Dean of Students, university partner",
-  },
-  {
-    quote: "Clear, kind and rigorous. We extended to year two.",
-    source: "Program director, agency partner",
-  },
-];
-
 /** "Client testimonials": a row of quote cards that scrolls sideways. */
 export function Testimonials({
-  items = defaultTestimonials,
+  content: c,
 }: {
-  items?: Testimonial[];
+  content: HomeContent["testimonials"];
 }) {
+  const items: Testimonial[] = c.items.map((t) => ({
+    quote: t.quote,
+    source: t.source,
+    avatarSrc: t.avatar ?? undefined,
+  }));
   const track = useRef<HTMLUListElement>(null);
 
   const step = (direction: 1 | -1) => {
@@ -59,10 +45,8 @@ export function Testimonials({
       <div className="relative mx-auto max-w-[1440px] px-6 py-20 md:px-16 lg:py-24">
         <div className="flex items-end justify-between gap-6">
           <div>
-            <p className="mb-4 text-sm text-white/75">
-              Trusted by 100+ organizations since 2008
-            </p>
-            <h2 className="type-h2">Client testimonials</h2>
+            <p className="mb-4 text-sm text-white/75">{c.eyebrow}</p>
+            <h2 className="type-h2">{c.title}</h2>
           </div>
           <div className="flex gap-2 pb-1">
             <button

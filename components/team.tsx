@@ -1,8 +1,9 @@
+import { homeDefaults, type HomeContent } from "@/content/home";
 import Link from "next/link";
 import { BlockButton, BloomGrid, Photo } from "@/components/brand";
 import { Glyph } from "@/components/icons";
 
-export type TeamMember = {
+type TeamMember = {
   name: string;
   role: string;
   href: string;
@@ -12,55 +13,39 @@ export type TeamMember = {
   tone: string;
 };
 
-export const defaultTeam: TeamMember[] = [
-  {
-    name: "Dr. Maryam M. Jernigan-Noesi",
-    role: "Founder · Psychologist",
-    href: "/our-team",
-    tone: "bg-navy-100",
-  },
-  {
-    name: "Team member",
-    role: "Senior consultant",
-    href: "/our-team",
-    tone: "bg-lilac-200",
-  },
-  {
-    name: "Team member",
-    role: "Research lead",
-    href: "/our-team",
-    tone: "bg-blue-200",
-  },
-  {
-    name: "Team member",
-    role: "Facilitator",
-    href: "/our-team",
-    tone: "bg-paper-100",
-  },
-];
-
 /** "The people behind the work": four portraits and the bloom strip. */
-export function Team({ members = defaultTeam }: { members?: TeamMember[] }) {
+export function Team({
+  content: c = homeDefaults.team,
+}: {
+  content?: HomeContent["team"];
+}) {
+  const tones = ["bg-navy-100", "bg-lilac-200", "bg-blue-200", "bg-paper-100"];
+  const members: TeamMember[] = c.members.map((m, i) => ({
+    name: m.name,
+    role: m.role,
+    href: m.href || "/our-team",
+    imageSrc: m.image ?? undefined,
+    tone: tones[i % tones.length],
+  }));
   return (
     <section className="overflow-hidden bg-blue-900 text-white">
       <div className="mx-auto max-w-[1440px] px-6 pt-20 md:px-16 lg:pt-28">
         <div className="grid items-end gap-x-16 gap-y-8 lg:grid-cols-[minmax(0,2.2fr)_minmax(0,1fr)]">
           <div>
-            <p className="mb-4 text-sm text-white/75">Practice pioneers</p>
+            <p className="mb-4 text-sm text-white/75">{c.eyebrow}</p>
             <h2 className="type-h2-lg">
-              <span className="block">The people</span>
-              <span className="block">behind the work</span>
+              {c.title.map((line) => (
+                <span key={line} className="block">
+                  {line}
+                </span>
+              ))}
             </h2>
           </div>
           <div>
-            <p className="type-body max-w-md text-white/80">
-              Led by Dr. Jernigan-Noesi and powered by senior consultants,
-              consultants, junior associates and strategic partners, with 50+
-              years of collective experience.
-            </p>
+            <p className="type-body max-w-md text-white/80">{c.body}</p>
             <div className="mt-6">
-              <BlockButton href="/our-team" variant="light">
-                Meet the team
+              <BlockButton href={c.ctaHref} variant="light">
+                {c.ctaLabel}
               </BlockButton>
             </div>
           </div>

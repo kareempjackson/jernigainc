@@ -6,6 +6,10 @@ const nextConfig: NextConfig = {
     agentFeedback: true,
   },
   cacheComponents: true,
+  images: {
+    // Photos uploaded in the Sanity Studio.
+    remotePatterns: [{ protocol: "https", hostname: "cdn.sanity.io" }],
+  },
   partialPrefetching: true,
   turbopack: {
     rules: {

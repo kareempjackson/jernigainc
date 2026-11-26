@@ -1,48 +1,10 @@
 import Link from "next/link";
 import { TreeMark } from "@/components/tree-mark";
-import { Glyph, type GlyphName } from "@/components/icons";
+import { Mark } from "@/components/brand";
+import { Glyph } from "@/components/icons";
+import type { SiteContent } from "@/content/site";
 
 export type FooterLink = { label: string; href: string };
-
-export const defaultExplore: FooterLink[] = [
-  { label: "About", href: "/about" },
-  { label: "What we do", href: "/services" },
-  { label: "Our team", href: "/our-team" },
-  { label: "Insights", href: "/insights" },
-];
-
-export const defaultServices: FooterLink[] = [
-  { label: "Education", href: "/services/education" },
-  { label: "Mental health", href: "/services/mental-health" },
-  { label: "Healthcare", href: "/services/healthcare" },
-  { label: "Research & evaluation", href: "/services/research-and-evaluation" },
-  { label: "Leadership & people", href: "/services/leadership-development" },
-  { label: "Curriculum & training", href: "/services/curriculum-and-training" },
-];
-
-/** Replace each `#` with the real profile URL. */
-export const defaultSocial: FooterLink[] = [
-  { label: "LinkedIn", href: "#" },
-  { label: "Instagram", href: "#" },
-  { label: "Facebook", href: "#" },
-  { label: "X", href: "#" },
-];
-
-const contact: { icon: GlyphName; label: string; href?: string }[] = [
-  { icon: "phone", label: "404-410-6674", href: "tel:+14044106674" },
-  {
-    icon: "mail",
-    label: "admin@mmjerniganassociates.com",
-    href: "mailto:admin@mmjerniganassociates.com",
-  },
-  { icon: "pin", label: "Atlanta, GA · Virtual-first" },
-];
-
-const legal: FooterLink[] = [
-  { label: "Privacy", href: "/privacy" },
-  { label: "Terms", href: "/terms" },
-  { label: "Accessibility", href: "/accessibility" },
-];
 
 /** Eight-petal bloom with a centre dot, for the footer circles. */
 function Bloom({ className = "" }: { className?: string }) {
@@ -84,14 +46,14 @@ function Column({ title, links }: { title: string; links: FooterLink[] }) {
 
 /** Site-wide footer: link columns, bloom marks, wordmark lockup and legal line. */
 export function SiteFooter({
-  explore = defaultExplore,
-  services = defaultServices,
-  social = defaultSocial,
+  content: c,
+  services,
 }: {
-  explore?: FooterLink[];
-  services?: FooterLink[];
-  social?: FooterLink[];
+  content: SiteContent["footer"];
+  /** The practice areas, for the Services column. */
+  services: FooterLink[];
 }) {
+  const { explore, social, legal, contact } = c;
   return (
     <footer className="bg-navy-900 text-[15px] text-white">
       <div className="mx-auto max-w-[1440px] px-6 pb-10 pt-20 md:px-16 lg:pt-28">
@@ -105,7 +67,7 @@ export function SiteFooter({
               <ul className="mt-5 space-y-3.5">
                 {contact.map((item) => (
                   <li key={item.label} className="flex items-center gap-3">
-                    <Glyph
+                    <Mark
                       name={item.icon}
                       size={14}
                       className="shrink-0 text-tan-200"
@@ -179,10 +141,7 @@ export function SiteFooter({
         </div>
 
         <div className="mt-16 flex flex-wrap items-center justify-between gap-x-10 gap-y-4 text-sm text-white/70">
-          <p>
-            © 2026 Jernigan &amp; Associates Psychological and Educational
-            Consulting, Inc.
-          </p>
+          <p>{c.copyright}</p>
           <ul className="flex items-center gap-4">
             {legal.map((link, i) => (
               <li key={link.label} className="flex items-center gap-4">

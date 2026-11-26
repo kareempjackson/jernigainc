@@ -1,3 +1,4 @@
+import { homeDefaults, type HomeContent } from "@/content/home";
 import { FilmPlayer } from "@/components/film-player";
 
 /**
@@ -5,11 +6,13 @@ import { FilmPlayer } from "@/components/film-player";
  * Pass `videoSrc` / `posterSrc` (files under /public) once the film exists.
  */
 export function InTheRoom({
+  content: c = homeDefaults.film,
   videoSrc,
   posterSrc,
   captionsSrc,
-  meta = "2:14 · Captions on",
+  meta,
 }: {
+  content?: HomeContent["film"];
   videoSrc?: string;
   posterSrc?: string;
   captionsSrc?: string;
@@ -24,27 +27,28 @@ export function InTheRoom({
         <div className="grid items-end gap-x-16 gap-y-8 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)]">
           <div>
             <p className="type-eyebrow mb-5 font-normal text-blue-900/70">
-              In the room
+              {c.eyebrow}
             </p>
             <h2 className="type-h2-lg">
-              <span className="block">Science, translated</span>
-              <span className="block">into everyday practice.</span>
+              {c.title.map((line) => (
+                <span key={line} className="block">
+                  {line}
+                </span>
+              ))}
             </h2>
           </div>
           <p className="type-body max-w-md text-blue-900/75 lg:pb-3">
-            Workshops, keynotes and long-term partnerships with schools, health
-            systems, agencies and associations. Press play to see how we show
-            up.
+            {c.body}
           </p>
         </div>
 
         <div className="scroll-expand relative mt-14 aspect-video bg-blue-200 lg:mt-20 lg:aspect-[1.92]">
           <FilmPlayer
-            src={videoSrc}
-            poster={posterSrc}
+            src={videoSrc ?? (c.videoUrl || undefined)}
+            poster={posterSrc ?? c.poster ?? undefined}
             captions={captionsSrc}
-            title="Inside a Jernigan workshop"
-            meta={meta}
+            title={c.filmTitle}
+            meta={meta ?? c.meta}
           />
         </div>
 

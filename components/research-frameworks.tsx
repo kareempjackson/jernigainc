@@ -1,19 +1,6 @@
+import { insightsDefaults, type InsightsContent } from "@/content/insights";
 import { BlockButton, Flower, Photo } from "@/components/brand";
 import { Glyph } from "@/components/icons";
-
-const framework = [
-  ["Recognition", "bg-tan-300"],
-  ["Restoration", "bg-mist-200"],
-  ["Relationships", "bg-paper-100"],
-  ["Renewal", "bg-tan-300"],
-] as const;
-
-const topics = [
-  "Racial Trauma",
-  "Child Development",
-  "Mental Health",
-  "Education",
-];
 
 /**
  * Research page: the featured framework (the 4 R's) and the Intersections
@@ -21,14 +8,23 @@ const topics = [
  * under /public.
  */
 export function ResearchFrameworks({
+  content: c = insightsDefaults,
   articleHref = "#",
   imageSrc,
   imageAlt = "",
 }: {
+  content?: InsightsContent;
   articleHref?: string;
   imageSrc?: string;
   imageAlt?: string;
 }) {
+  const tones = ["bg-tan-300", "bg-mist-200", "bg-paper-100", "bg-tan-300"];
+  const framework = c.featured.pillars.map(
+    (name, i) => [name, tones[i % tones.length]] as const,
+  );
+  const topics = c.lab.topics;
+  articleHref = c.featured.ctaHref || articleHref;
+  imageSrc = imageSrc ?? c.lab.image ?? undefined;
   return (
     <section className="bg-white text-blue-900">
       <div className="mx-auto max-w-[1440px] px-6 md:px-16 py-14 lg:py-20">
@@ -39,16 +35,18 @@ export function ResearchFrameworks({
                 aria-hidden="true"
                 className="size-1 rounded-full bg-current"
               />
-              Insights and thought leadership
+              {c.frameworks.eyebrow}
             </p>
             <h2 className="font-serif text-[clamp(1.875rem,3.1vw,2.5rem)] leading-[1.05] tracking-[-0.015em] mt-4 text-navy-900">
-              <span className="block">Frameworks, research</span>
-              <span className="block">and commentary</span>
+              {c.frameworks.title.map((line) => (
+                <span key={line} className="block">
+                  {line}
+                </span>
+              ))}
             </h2>
           </div>
           <p className="text-[15px] leading-[1.6] text-blue-900/70">
-            Our research, frameworks and commentary live here in one home,
-            grounded in the Intersections Research Lab.
+            {c.frameworks.body}
           </p>
         </div>
 
@@ -56,19 +54,22 @@ export function ResearchFrameworks({
           <div className="bg-lilac-200 p-8 sm:p-12">
             <p className="flex items-center gap-2.5 text-[13px]">
               <Glyph name="blocks" size={15} />
-              Featured framework · The Counseling Psychologist
+              {c.featured.label}
             </p>
             <h3 className="font-serif text-[clamp(1.875rem,3.1vw,2.5rem)] leading-[1.05] tracking-[-0.015em] mt-5">
-              <span className="block">Connecting to</span>
-              <span className="block">Ancestral Wisdom</span>
+              {c.featured.title.map((line) => (
+                <span key={line} className="block">
+                  {line}
+                </span>
+              ))}
             </h3>
             <p className="mt-5 max-w-[36rem] text-[15px] leading-[1.65] text-blue-900/80">
-              A four-part framework for transforming how psychology is taught,
-              researched, and practiced, introduced in Dr. Jernigan-Noesi’s
-              article in The Counseling Psychologist.
+              {c.featured.body}
             </p>
             <div className="mt-7">
-              <BlockButton href={articleHref}>Read the article</BlockButton>
+              <BlockButton href={articleHref}>
+                {c.featured.ctaLabel}
+              </BlockButton>
             </div>
           </div>
 
@@ -108,18 +109,17 @@ export function ResearchFrameworks({
                 aria-hidden="true"
                 className="size-1 rounded-full bg-current"
               />
-              From the Intersections Research Lab
+              {c.lab.eyebrow}
             </p>
             <h3 className="font-serif text-[clamp(1.875rem,3.1vw,2.5rem)] leading-[1.05] tracking-[-0.015em] mt-4 text-navy-900">
-              <span className="block">Research that starts</span>
-              <span className="block">with lived experience.</span>
+              {c.lab.title.map((line) => (
+                <span key={line} className="block">
+                  {line}
+                </span>
+              ))}
             </h3>
             <p className="mt-6 max-w-[42rem] text-[15px] leading-[1.65] text-blue-900/75">
-              Through the Intersections Research Lab, Dr. Jernigan-Noesi
-              investigates the social determinants of racial health disparities,
-              culturally responsive assessment and treatment models,
-              social-emotional development, and racism-related stress and trauma
-              across the lifespan.
+              {c.lab.body}
             </p>
             <ul className="mt-6 flex flex-wrap gap-2">
               {topics.map((topic) => (

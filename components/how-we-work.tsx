@@ -1,24 +1,6 @@
+import { homeDefaults, type HomeContent } from "@/content/home";
 import Image from "next/image";
-import { BlockButton, BloomGrid, Flower } from "@/components/brand";
-import { Glyph } from "@/components/icons";
-
-const steps = [
-  {
-    icon: <Glyph name="focus" size={22} />,
-    title: "Needs assessment",
-    body: "Listening sessions, climate surveys and data review to see where belonging breaks down.",
-  },
-  {
-    icon: <Flower size={22} />,
-    title: "Facilitated learning",
-    body: "Workshops and coaching that build skills leaders and staff can use the next day.",
-  },
-  {
-    icon: <Glyph name="bars" size={22} />,
-    title: "Measured impact",
-    body: "Clear reporting that shows what changed, for whom, and what to do next.",
-  },
-];
+import { BlockButton, BloomGrid, Mark } from "@/components/brand";
 
 /**
  * "What working with us looks like": full-bleed photo left, the three steps on
@@ -26,12 +8,19 @@ const steps = [
  * photograph is available; until then the frame is a labelled photo slot.
  */
 export function HowWeWork({
+  content: c = homeDefaults.howWeWork,
   imageSrc,
   imageAlt = "",
 }: {
+  content?: HomeContent["howWeWork"];
   imageSrc?: string;
   imageAlt?: string;
 }) {
+  imageSrc = imageSrc ?? c.image ?? undefined;
+  const steps = c.steps.map((step) => ({
+    ...step,
+    icon: <Mark name={step.icon} size={22} />,
+  }));
   return (
     <section className="grid bg-lilac-200 text-blue-900 lg:grid-cols-[minmax(0,0.74fr)_minmax(0,1fr)]">
       <div className="relative min-h-[320px] bg-tan-200 lg:min-h-[620px]">
@@ -62,7 +51,7 @@ export function HowWeWork({
 
         <div className="relative flex h-full max-w-[820px] flex-col px-6 py-16 md:px-16 lg:py-24">
           <h2 className="font-serif text-[clamp(2rem,3.2vw,2.75rem)] leading-[1.04] tracking-[-0.015em]">
-            What working with us looks like
+            {c.title}
           </h2>
 
           <ol className="mt-12 space-y-9">
@@ -82,9 +71,7 @@ export function HowWeWork({
           </ol>
 
           <div className="mt-14 lg:mt-auto lg:pt-14">
-            <BlockButton href="/services">
-              Learn more about how we work
-            </BlockButton>
+            <BlockButton href={c.ctaHref}>{c.ctaLabel}</BlockButton>
           </div>
         </div>
       </div>

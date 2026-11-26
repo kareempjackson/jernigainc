@@ -1,31 +1,24 @@
+import { teamDefaults, type TeamContent } from "@/content/team";
 import Image from "next/image";
 import { BlockButton, Chip, Tag } from "@/components/brand";
 import { Glyph } from "@/components/icons";
-
-const stats = [
-  ["22+", "Years of leadership"],
-  ["30+", "Peer-reviewed publications"],
-  ["100+", "National and international presentations"],
-] as const;
-
-const credentials = [
-  "PhD, Counseling Psychology, Boston College · MEd, Vanderbilt University · BA, Fisk University",
-  "Clinical training, Center for Multicultural Training in Psychology (Boston Medical Center and BU School of Medicine)",
-  "Fellowships at Harvard Medical School and Yale University School of Medicine",
-  "Honorary Doctorate of Humane Letters, Palo Alto University",
-];
 
 /**
  * Our team page: the founder profile (the page's `#founder` target). Pass
  * `imageSrc` (a cut-out portrait under /public).
  */
 export function TeamFounder({
+  content: c = teamDefaults.founder,
   imageSrc,
   imageAlt = "Dr. Maryam M. Jernigan-Noesi",
 }: {
+  content?: TeamContent["founder"];
   imageSrc?: string;
   imageAlt?: string;
 }) {
+  imageSrc = imageSrc ?? c.image ?? undefined;
+  const stats = c.stats.map((s) => [s.figure, s.label] as const);
+  const credentials = c.credentials;
   return (
     <section id="founder" className="scroll-mt-6 bg-paper-100 text-blue-900">
       <div className="mx-auto max-w-[1440px] px-6 md:px-16 grid items-start gap-x-20 gap-y-12 py-14 lg:grid-cols-[minmax(0,5fr)_minmax(0,8fr)] lg:py-20">
@@ -47,18 +40,18 @@ export function TeamFounder({
             <div className="absolute bottom-7 left-4">
               <Chip
                 icon="award"
-                figure="2024"
-                label="Dr. Janet E. Helms Racial Justice Award, APA Div. 17"
+                figure={c.awardFigure}
+                label={c.awardLabel}
                 className="bg-tan-300 [&>span:last-child]:max-w-[24ch]"
               />
             </div>
           </div>
           <figcaption className="bg-lilac-200 px-5 py-5">
-            <p className="font-medium">Dr. Maryam M. Jernigan-Noesi</p>
+            <p className="font-medium">{c.name}</p>
             <p className="mt-3 flex flex-wrap gap-1.5">
-              <Tag>PhD</Tag>
-              <Tag>Licensed Psychologist</Tag>
-              <Tag>Founder and CEO</Tag>
+              {c.tags.map((tag) => (
+                <Tag key={tag}>{tag}</Tag>
+              ))}
             </p>
           </figcaption>
         </figure>
@@ -69,28 +62,20 @@ export function TeamFounder({
               aria-hidden="true"
               className="size-1 rounded-full bg-current"
             />
-            Founder and CEO
+            {c.eyebrow}
           </p>
           <h2 className="font-serif text-[clamp(1.875rem,3.1vw,2.5rem)] leading-[1.05] tracking-[-0.015em] mt-4">
-            <span className="block">Dr. Maryam M.</span>
-            <span className="block">Jernigan-Noesi</span>
+            {c.title.map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))}
           </h2>
           <p className="mt-6 max-w-[44rem] text-base leading-[1.6] text-blue-900/85">
-            Dr. Maryam M. Jernigan-Noesi is the Founder and CEO of Jernigan
-            &amp; Associates. A licensed psychologist, clinician-scientist, and
-            award-winning scholar with more than two decades of experience, she
-            sets the firm’s strategic vision and provides content expertise
-            across behavioral health, healthcare, education, legal and criminal
-            justice, and entertainment.
+            {c.bio}
           </p>
           <p className="mt-4 max-w-[44rem] text-[15px] leading-[1.6] text-blue-900/65">
-            As Director of the Intersections Research Lab, she investigates
-            racial health disparities, culturally responsive assessment and
-            treatment, and racism-related stress and trauma across the lifespan,
-            work recognized by the Ford and Mellon Foundations and the American
-            Psychological Association. She advises Sesame Street’s racial
-            justice initiative and co-founded the nonprofit Psychologists for
-            Racial Justice.
+            {c.bioSecondary}
           </p>
 
           <dl className="mt-9 grid gap-x-6 gap-y-6 sm:grid-cols-3">
@@ -126,7 +111,7 @@ export function TeamFounder({
           </ul>
 
           <div className="mt-7">
-            <BlockButton href="/contact">Book a consultation</BlockButton>
+            <BlockButton href={c.ctaHref}>{c.ctaLabel}</BlockButton>
           </div>
         </div>
       </div>
