@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   /* config options here */
   experimental: {
     agentFeedback: true,
+    // Build from scratch every time. With the cache on, a deploy reused a
+    // stale stylesheet (missing newly added CSS) while serving the new pages.
+    turbopackFileSystemCacheForBuild: false,
   },
   cacheComponents: true,
   images: {
