@@ -59,9 +59,16 @@ export async function getServices() {
   });
 }
 
+/**
+ * Articles, newest first. Only articles with a slug have a page, so those are
+ * the ones returned; until the Studio has at least one, the sample pieces in
+ * /content are shown.
+ */
 export async function getArticles() {
   const docs = await query<unknown[]>(
-    `*[_type == "article"] | order(_createdAt asc)`,
+    `*[_type == "article"] | order(_createdAt desc)`,
   );
-  return docs?.length ? resolve(articleDefaults, docs) : articleDefaults;
+  if (!docs?.length) return articleDefaults;
+  const published = resolve(articleDefaults, docs).filter((a) => a.slug);
+  return published.length ? published : articleDefaults;
 }
